@@ -1,0 +1,14 @@
+names:
+- Unripe
+- Ripe
+- Overripe
+nc: 3
+roboflow:
+  license: CC BY 4.0
+  project: coffee-fruit-maturity-befkg
+  url: https://universe.roboflow.com/ciencia-cafeto/coffee-fruit-maturity-befkg/dataset/1
+  version: 1
+  workspace: ciencia-cafeto
+test: c:\Users\hp\OneDrive\projects\Coffee-prediction\Coffee Fruit Maturity ---.v1i.yolov8\test\images
+train: c:\Users\hp\OneDrive\projects\Coffee-prediction\Coffee Fruit Maturity ---.v1i.yolov8\train\images
+val: c:\Users\hp\OneDrive\projects\Coffee-prediction\Coffee Fruit Maturity ---.v1i.yolov8\valid\images

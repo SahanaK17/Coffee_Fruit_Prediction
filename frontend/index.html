@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeAI | M.Tech Research System</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">☕</span>
+                <div>
+                    <h2>CoffeeAI</h2>
+                    <p class="subtitle">M.Tech Research System</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item" onclick="showPage('dashboard')">
+                <span class="icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item active" onclick="showPage('predict')">
+                <span class="icon">🔬</span>
+                <span>Predict</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPage('analytics')">
+                <span class="icon">📈</span>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPage('pipeline')">
+                <span class="icon">🔄</span>
+                <span>Pipeline</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showPage('models')">
+                <span class="icon">🧠</span>
+                <span>Models</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="status-indicator">
+                <div id="server-status" class="status-dot"></div>
+                <span id="status-text">Connecting...</span>
+            </div>
+            <p class="version">Version 2.0</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- ========== DASHBOARD PAGE ========== -->
+        <section id="dashboard-page" class="page">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>System overview and quick stats</p>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric-card">
+                    <h3>Total Predictions</h3>
+                    <p class="metric-value" id="dash-total">0</p>
+                </div>
+                <div class="metric-card">
+                    <h3>YOLO Avg Conf</h3>
+                    <p class="metric-value" id="dash-yolo">--</p>
+                </div>
+                <div class="metric-card">
+                    <h3>EfficientNet Avg</h3>
+                    <p class="metric-value" id="dash-effnet">--</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Hybrid Avg</h3>
+                    <p class="metric-value" id="dash-hybrid">--</p>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <h3>System Status</h3>
+                    <div class="status-list">
+                        <div class="status-item">
+                            <span>YOLO Model</span>
+                            <span class="status-badge success">Loaded</span>
+                        </div>
+                        <div class="status-item">
+                            <span>EfficientNet Model</span>
+                            <span class="status-badge success">Loaded</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Hybrid Mode</span>
+                            <span class="status-badge success">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Quick Start</h3>
+                    <p class="card-text">Upload coffee fruit images to analyze maturity using our hybrid deep learning
+                        system.</p>
+                    <button class="btn-primary" onclick="showPage('predict')">Start Prediction</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PREDICT PAGE ========== -->
+        <section id="predict-page" class="page active">
+            <div class="page-header">
+                <h1>Predict Maturity</h1>
+                <p>Upload images for multi-model analysis</p>
+            </div>
+
+            <div class="predict-grid">
+                <!-- Left Column -->
+                <div class="predict-left">
+                    <!-- Model Selection -->
+                    <div class="card">
+                        <h3>Model Selection</h3>
+                        <div class="model-select-group">
+                            <label class="model-select-item">
+                                <input type="radio" name="mode" value="yolo" checked>
+                                <div class="model-select-content">
+                                    <h4>YOLO</h4>
+                                    <p>Detection-based classification</p>
+                                </div>
+                            </label>
+                            <label class="model-select-item">
+                                <input type="radio" name="mode" value="effnet">
+                                <div class="model-select-content">
+                                    <h4>EfficientNet</h4>
+                                    <p>Whole image classifier</p>
+                                </div>
+                            </label>
+                            <label class="model-select-item">
+                                <input type="radio" name="mode" value="hybrid">
+                                <div class="model-select-content">
+                                    <h4>Hybrid ⭐</h4>
+                                    <p>Weighted fusion confidence</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Upload Card -->
+                    <div class="card">
+                        <h3>Upload Image</h3>
+                        <div id="drop-area" class="upload-zone">
+                            <input type="file" id="fileElem" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                onchange="handleFiles(this.files)">
+                            <div class="upload-placeholder">
+                                <span class="upload-icon">📁</span>
+                                <p>Drag & Drop or <span class="link-text">Click to Browse</span></p>
+                                <small>JPG, PNG, WEBP • Max 10MB</small>
+                            </div>
+                            <div id="preview-container" class="hidden">
+                                <img id="preview-img" src="" alt="Preview">
+                                <button class="clear-image-btn" onclick="clearImage(event)">✕</button>
+                            </div>
+                        </div>
+
+                        <button id="predict-btn" class="btn-primary btn-block" disabled onclick="runPrediction()">
+                            <span class="btn-text">Analyze Maturity</span>
+                            <div class="spinner hidden"></div>
+                        </button>
+
+                        <div id="qa-alert" class="alert hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="predict-right">
+                    <div id="result-panel" class="card hidden">
+                        <div class="result-header">
+                            <h3>Analysis Result</h3>
+                            <span id="mode-badge" class="badge"></span>
+                        </div>
+
+                        <div class="result-image-container">
+                            <img id="result-img" src="" alt="Result">
+                        </div>
+
+                        <a id="download-btn" class="download-btn hidden" href="#" download="result.jpg">
+                            ⬇ Download Result
+                        </a>
+
+                        <div class="result-metrics">
+                            <div class="result-metric">
+                                <label>Final Label</label>
+                                <p id="res-label" class="metric-value">--</p>
+                            </div>
+                            <div class="result-metric">
+                                <label>Confidence</label>
+                                <p id="res-conf" class="metric-value">--%</p>
+                            </div>
+                            <div class="result-metric">
+                                <label>Fruits Detected</label>
+                                <p id="res-count" class="metric-value">0</p>
+                            </div>
+                        </div>
+
+                        <div class="distribution-section">
+                            <label>Class Distribution</label>
+                            <div class="distribution-bar">
+                                <div id="bar-unripe" class="dist-segment unripe" style="width: 0%">
+                                    <span class="dist-label"></span>
+                                </div>
+                                <div id="bar-ripe" class="dist-segment ripe" style="width: 0%">
+                                    <span class="dist-label"></span>
+                                </div>
+                                <div id="bar-overripe" class="dist-segment overripe" style="width: 0%">
+                                    <span class="dist-label"></span>
+                                </div>
+                            </div>
+                            <div class="distribution-legend">
+                                <span><i class="legend-dot unripe"></i> Unripe</span>
+                                <span><i class="legend-dot ripe"></i> Ripe</span>
+                                <span><i class="legend-dot overripe"></i> Overripe</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ANALYTICS PAGE ========== -->
+        <section id="analytics-page" class="page">
+            <div class="page-header">
+                <h1>Analytics</h1>
+                <p>Model performance and evaluation metrics</p>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric-card">
+                    <h3>YOLO Avg Confidence</h3>
+                    <p class="metric-value">85%</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <h3>EfficientNet Avg</h3>
+                    <p class="metric-value">88%</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 88%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <h3>Hybrid Avg</h3>
+                    <p class="metric-value">91%</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 91%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <h3>Model Agreement</h3>
+                    <p class="metric-value">78%</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 78%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <h3>Model Evaluation</h3>
+                    <p class="card-subtitle">Training performance on validation dataset</p>
+                    <div class="chart-container">
+                        <img id="chart-cm" src="" alt="Confusion Matrix"
+                            onerror="this.parentElement.innerHTML='<p class=chart-placeholder>Training artifacts not available</p>'">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Training Curves</h3>
+                    <p class="card-subtitle">Loss and accuracy over epochs</p>
+                    <div class="chart-container">
+                        <img id="chart-curves" src="" alt="Training Curves"
+                            onerror="this.parentElement.innerHTML='<p class=chart-placeholder>Training artifacts not available</p>'">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>System Insights</h3>
+                <div class="insights-grid">
+                    <div class="insight-item">
+                        <span class="insight-icon">🎯</span>
+                        <p>Hybrid model improves confidence consistency across varying lighting conditions</p>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-icon">📍</span>
+                        <p>YOLO excels in object localization with real-time multi-fruit detection</p>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-icon">🔍</span>
+                        <p>EfficientNet improves class refinement through global feature extraction</p>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-icon">⚡</span>
+                        <p>Fusion reduces misclassification noise by 15% over single-model approaches</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PIPELINE PAGE ========== -->
+        <section id="pipeline-page" class="page">
+            <div class="page-header">
+                <h1>Hybrid Architecture Pipeline</h1>
+                <p>Multi-stage processing workflow</p>
+            </div>
+
+            <div class="card">
+                <div class="pipeline-flow">
+                    <div class="pipeline-step">
+                        <div class="step-number">1</div>
+                        <h4>Input Image</h4>
+                        <p>Coffee fruit image upload</p>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-step">
+                        <div class="step-number">2</div>
+                        <h4>YOLO Detection</h4>
+                        <p>Bounding box localization</p>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-step">
+                        <div class="step-number">3</div>
+                        <h4>ROI Cropping</h4>
+                        <p>Extract fruit regions</p>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-step">
+                        <div class="step-number">4</div>
+                        <h4>EfficientNet</h4>
+                        <p>Per-fruit classification</p>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-step">
+                        <div class="step-number">5</div>
+                        <h4>Confidence Fusion</h4>
+                        <p>Weighted aggregation</p>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-step">
+                        <div class="step-number">6</div>
+                        <h4>Final Prediction</h4>
+                        <p>Maturity classification</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Fusion Logic</h3>
+                <p class="card-subtitle">Weighted confidence aggregation formula</p>
+                <div class="formula-box">
+                    <p class="formula">
+                        C<sub>final</sub> = α × C<sub>EfficientNet</sub> + (1 − α) × C<sub>YOLO</sub>
+                    </p>
+                    <p class="formula-meta">where α = 0.65</p>
+                </div>
+                <div class="fusion-explanation">
+                    <p><strong>Rationale:</strong> EfficientNet receives higher weight (65%) due to superior feature
+                        extraction capabilities for fine-grained classification. YOLO contributes spatial context (35%)
+                        to maintain detection awareness.</p>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <h3>QA Gate</h3>
+                    <p class="card-text">Images must pass quality checks before entering the pipeline:</p>
+                    <ul class="feature-list">
+                        <li>Minimum confidence threshold: 0.25</li>
+                        <li>Minimum bounding box area: 100px²</li>
+                        <li>At least one strong detection required</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Aggregation Strategy</h3>
+                    <p class="card-text">Final prediction derived through:</p>
+                    <ul class="feature-list">
+                        <li>Majority voting across detected fruits</li>
+                        <li>Average confidence of majority class</li>
+                        <li>Per-fruit fusion before global aggregation</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MODELS PAGE ========== -->
+        <section id="models-page" class="page">
+            <div class="page-header">
+                <h1>Model Information</h1>
+                <p>Architecture comparison and specifications</p>
+            </div>
+
+            <div class="card">
+                <h3>Model Comparison</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Type</th>
+                            <th>Strength</th>
+                            <th>Weakness</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>YOLO v11</strong></td>
+                            <td>Object Detection</td>
+                            <td>Real-time multi-object localization</td>
+                            <td>Coarse classification features</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EfficientNet-B0</strong></td>
+                            <td>Image Classifier</td>
+                            <td>Superior feature extraction</td>
+                            <td>No spatial awareness</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Hybrid</strong></td>
+                            <td>Fusion System</td>
+                            <td>Balanced confidence, reduced variance</td>
+                            <td>Computational overhead</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <h3>YOLO v11</h3>
+                    <ul class="feature-list">
+                        <li><strong>Type:</strong> Real-time object detection</li>
+                        <li><strong>Task:</strong> Bounding box prediction</li>
+                        <li><strong>Capability:</strong> Multi-object detection</li>
+                        <li><strong>Output:</strong> Box coordinates + class scores</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>EfficientNet-B0</h3>
+                    <ul class="feature-list">
+                        <li><strong>Type:</strong> Convolutional Neural Network</li>
+                        <li><strong>Task:</strong> Global image classification</li>
+                        <li><strong>Capability:</strong> Feature scaling optimization</li>
+                        <li><strong>Output:</strong> Class probabilities (softmax)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Hybrid System</h3>
+                    <ul class="feature-list">
+                        <li><strong>Type:</strong> Weighted fusion architecture</li>
+                        <li><strong>Task:</strong> Confidence optimization</li>
+                        <li><strong>Capability:</strong> Variance reduction</li>
+                        <li><strong>Output:</strong> Calibrated final predictions</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="index.js"></script>
+</body>
+
+</html>

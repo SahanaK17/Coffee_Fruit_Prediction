@@ -1,0 +1,15 @@
+ultralytics
+torch
+torchvision
+fastapi
+uvicorn
+python-multipart
+numpy
+opencv-python
+Pillow
+matplotlib
+seaborn
+scikit-learn
+pyyaml
+pandas
+tqdm

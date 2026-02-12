@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual Environment
+venv/
+.env/
+.venv/
+
+# Model files
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Logs
+logs/
+*.log
+
+# System
+.DS_Store
+Thumbs.db
+
+# Node (if any)
+node_modules/
+
+# Cache
+.cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Dataset
+data/
+datasets/
+uploads/
