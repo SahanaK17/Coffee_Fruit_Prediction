@@ -25,6 +25,7 @@ EFFNET_PATH = MODELS_DIR / "effnet" / "effnet" / "best.pth"
 UPLOADS_DIR = BASE_DIR / "uploads"
 DATA_DIR = BASE_DIR / "data"
 HISTORY_FILE = DATA_DIR / "predictions_history.json"
+REJECTED_FILE = DATA_DIR / "rejected_history.json"
 
 # Create directories
 UPLOADS_DIR.mkdir(exist_ok=True)
@@ -85,11 +86,15 @@ def convert_webp_to_png(file_bytes: bytes) -> bytes:
     return buffer.tobytes()
 
 def store_prediction(data: dict):
-    """Store QA-passed prediction to history."""
+    """Store prediction to appropriate history file (Valid or Rejected)."""
     try:
+        # Determine target file based on QA result
+        is_rejected = data.get('final_label') == 'REJECTED'
+        target_file = REJECTED_FILE if is_rejected else HISTORY_FILE
+        
         history = []
-        if HISTORY_FILE.exists():
-            with open(HISTORY_FILE, 'r') as f:
+        if target_file.exists():
+            with open(target_file, 'r') as f:
                 history = json.load(f)
         
         # Add timestamp
@@ -99,8 +104,11 @@ def store_prediction(data: dict):
         # Keep only last 1000 records
         history = history[-1000:]
         
-        with open(HISTORY_FILE, 'w') as f:
+        with open(target_file, 'w') as f:
             json.dump(history, f, indent=2)
+            
+        print(f"[LOG] Stored {'REJECTED' if is_rejected else 'VALID'} prediction to {target_file.name}")
+            
     except Exception as e:
         print(f"[WARNING] Failed to store prediction: {e}")
 
@@ -334,6 +342,11 @@ async def predict_yolo(file: UploadFile = File(...)):
         annotated_img = model_instance.draw_annotations(str(temp_path), result['predictions'])
         b64_img = image_to_base64(annotated_img)
         
+        # Debug logging
+        print(f"\n[PREDICTION - YOLO]")
+        print(f"  Final Label: {result['final_label']}")
+        print(f"  Confidence: {result['final_confidence'] * 100:.1f}%")
+        
         # Build response
         response = {
             "ok": True,
@@ -342,6 +355,8 @@ async def predict_yolo(file: UploadFile = File(...)):
             "mode": result['mode'],
             "final_label": result['final_label'],
             "final_confidence": result['final_confidence'],
+            "yolo_label": result['final_label'],
+            "yolo_confidence": result['final_confidence'],
             "fruits_detected": result['fruits_detected'],
             "distribution": result['distribution'],
             "annotated_image": b64_img
@@ -466,6 +481,11 @@ async def predict_effnet(file: UploadFile = File(...)):
         # ===== PREDICTION =====
         result = model_instance.predict_effnet_only(str(temp_path))
         
+        # Debug logging
+        print(f"\n[PREDICTION - EfficientNet]")
+        print(f"  Final Label: {result['final_label']}")
+        print(f"  Confidence: {result['final_confidence'] * 100:.1f}%")
+
         response = {
             "ok": True,
             "message": qa_message,
@@ -473,6 +493,8 @@ async def predict_effnet(file: UploadFile = File(...)):
             "mode": result['mode'],
             "final_label": result['final_label'],
             "final_confidence": result['final_confidence'],
+            "eff_label": result['final_label'],
+            "eff_confidence": result['final_confidence'],
             "fruits_detected": result['fruits_detected'],
             "distribution": result['distribution'],
             "annotated_image": None 
@@ -604,6 +626,12 @@ async def predict_hybrid(file: UploadFile = File(...)):
         annotated_img = model_instance.draw_annotations(str(temp_path), result['predictions'])
         b64_img = image_to_base64(annotated_img)
         
+        # Debug logging
+        print(f"\n[PREDICTION - Hybrid]")
+        print(f"  YOLO: {result.get('yolo_label')} ({result.get('yolo_confidence', 0) * 100:.1f}%)")
+        print(f"  EffNet: {result.get('eff_label')} ({result.get('eff_confidence', 0) * 100:.1f}%)")
+        print(f"  Final: {result['final_label']} ({result['final_confidence'] * 100:.1f}%)")
+
         response = {
             "ok": True,
             "message": qa_message,
@@ -611,6 +639,10 @@ async def predict_hybrid(file: UploadFile = File(...)):
             "mode": result['mode'],
             "final_label": result['final_label'],
             "final_confidence": result['final_confidence'],
+            "yolo_label": result.get('yolo_label'),
+            "yolo_confidence": result.get('yolo_confidence'),
+            "eff_label": result.get('eff_label'),
+            "eff_confidence": result.get('eff_confidence'),
             "fruits_detected": result['fruits_detected'],
             "distribution": result['distribution'],
             "annotated_image": b64_img,

@@ -1,0 +1,30 @@
+[
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T13:05:02.388968"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T13:07:12.993521"
+  }
+]

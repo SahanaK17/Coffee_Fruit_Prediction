@@ -19,18 +19,23 @@ class HybridModel:
         self.num_classes = num_classes
         
         # ===== STRICT QA THRESHOLDS =====
-        self.qa_min_conf = 0.40             # Minimum confidence for a "strong" detection
-        self.qa_min_total_area = 0.002      # 0.2% minimum total area (sum of boxes)
-        self.qa_max_total_area = 0.65       # 65% maximum total area
-        self.qa_min_single_box_area = 0.001 # 0.1% minimum size for a single box
+        self.qa_min_conf = 0.35             # Minimum confidence for a "strong" detection
+        self.qa_min_fruits = 3              # MANDATORY: At least 3 fruits to be a valid cluster
+        self.qa_min_total_area = 0.005      # 0.5% min area (increased to block noise)
+        self.qa_max_total_area = 0.75       # 75% max area
         self.qa_center_fraction = 0.60      # Middle 60% of image must contain a detection
+        
+        # Domain validation
+        self.qa_effnet_min_conf = 0.60      # Minimum EfficientNet confidence for domain validity
+        self.qa_aspect_ratio_min = 0.4      # Range for coffee fruit shape (approx 1:1 or 2:3)
+        self.qa_aspect_ratio_max = 2.5
         
         # Sketch/Noise Thresholds
         self.qa_min_saturation = 15.0       # Minimum average saturation (0-255)
         self.qa_min_color_variance = 500.0  # Minimum color variance
         
         # Fusion parameter
-        self.fusion_alpha = 0.65
+        self.fusion_alpha = 0.60
         
         # Load YOLO
         print(f"[INFO] Loading YOLO from {yolo_path}")
@@ -57,33 +62,27 @@ class HybridModel:
 
     # ===== SAFE HELPER METHODS =====
     @staticmethod
-    def safe_max(arr, default=0):
+    def safe_max(arr, default=0.0):
         try: return float(max(arr)) if len(arr) > 0 else default
         except: return default
     
     @staticmethod
-    def safe_sum(arr, default=0):
-        try: return float(sum(arr)) if len(arr) > 0 else default
-        except: return default
-    
-    @staticmethod
-    def safe_div(num, den, default=0):
+    def safe_div(num, den, default=0.0):
         try: return float(num / den) if den > 0 else default
         except: return default
 
     def get_qa_rules(self) -> Dict:
         return {
             "min_conf": self.qa_min_conf,
+            "min_fruits": self.qa_min_fruits,
             "min_total_area": self.qa_min_total_area,
-            "max_total_area": self.qa_max_total_area,
-            "min_single_box_area": self.qa_min_single_box_area,
-            "center_check": True
+            "domain_conf": self.qa_effnet_min_conf,
+            "aspect_ratio": f"{self.qa_aspect_ratio_min}-{self.qa_aspect_ratio_max}"
         }
 
     def _is_sketch_or_noise(self, img_bgr) -> Tuple[bool, str, float]:
         """
         Heuristic Check: Detects sketches, line drawings, or low-info images.
-        Returns: (is_sketch, reason, metric_value)
         """
         try:
             # 1. Color Saturation Check
@@ -95,12 +94,11 @@ class HybridModel:
                 return True, f"Image too grayscale (sat={avg_sat:.1f})", avg_sat
 
             # 2. Color Variance (Standard Deviation)
-            # Sketches usually have low variance in color globally (mostly white/black)
             (mean, std) = cv2.meanStdDev(img_bgr)
             variance = np.mean(std ** 2)
             
-            # Note: This is a loose heuristic; relies more on YOLO, but helps reject simple line art
-            # Real photos usually have higher variance due to lighting/texture
+            if variance < self.qa_min_color_variance:
+                return True, f"Low color variance (var={variance:.1f})", float(variance)
             
             return False, "Photo-like", avg_sat
         except Exception:
@@ -108,9 +106,7 @@ class HybridModel:
 
     def _check_central_region(self, boxes, img_w, img_h) -> bool:
         """Check if any detection overlaps with the central region of class."""
-        if len(boxes) == 0:
-            return False
-            
+        if len(boxes) == 0: return False
         cx_min = img_w * (1 - self.qa_center_fraction) / 2
         cx_max = img_w * (1 + self.qa_center_fraction) / 2
         cy_min = img_h * (1 - self.qa_center_fraction) / 2
@@ -118,22 +114,35 @@ class HybridModel:
         
         for box in boxes:
             bx1, by1, bx2, by2 = box
-            
-            # Check for overlap
             overlap_x = max(0, min(bx2, cx_max) - max(bx1, cx_min))
             overlap_y = max(0, min(by2, cy_max) - max(by1, cy_min))
-            
-            if overlap_x > 0 and overlap_y > 0:
-                return True
-                
+            if overlap_x > 0 and overlap_y > 0: return True
         return False
+
+    def _check_aspect_ratios(self, boxes) -> Tuple[bool, float]:
+        """Check if boxes are roughly circular/elliptical (rejects long bars)."""
+        if len(boxes) == 0: return False, 0.0
+        ratios = []
+        valid_count = 0
+        for box in boxes:
+            w = box[2] - box[0]
+            h = box[3] - box[1]
+            if h > 0:
+                ratio = w / h
+                ratios.append(ratio)
+                if self.qa_aspect_ratio_min <= ratio <= self.qa_aspect_ratio_max:
+                    valid_count += 1
+        
+        avg_ratio = float(np.mean(ratios)) if ratios else 0.0
+        
+        # Require at least 50% of detections to be valid coffee shapes
+        if len(boxes) > 0 and (valid_count / len(boxes)) < 0.5:
+             return False, avg_ratio
+        return True, avg_ratio
 
     def qa_gate(self, image_path: str, mode: str = 'hybrid') -> Tuple[bool, str, Dict]:
         """
-        Strict QA Gate:
-        1. Heuristic Check (Anti-sketch)
-        2. YOLO Detection Check (Presence, Size, Location)
-        3. Threshold Validation
+        Strict QA Gate with Domain Validation (Coffee vs Non-Coffee)
         """
         try:
             img = cv2.imread(image_path)
@@ -143,21 +152,15 @@ class HybridModel:
             h, w = img.shape[:2]
             img_area = max(h * w, 1)
             
-            # ===== STAGE 0: HEURISTIC CHECK =====
+            # ===== STAGE 1: Visual Heuristics & Sketch Check =====
             is_sketch, sketch_msg, metric = self._is_sketch_or_noise(img)
-            # Note: We make this a "warning" rather than hard reject if YOLO sees strong coffee
-            # But if YOLO is weak AND it looks like a sketch -> hard reject
-            
-            # ===== STAGE A: YOLO PRESENCE CHECK =====
-            results = self.yolo(image_path, verbose=False)[0]
-            
-            if results.boxes is None or len(results.boxes) == 0:
-                return False, "QA Reject: No coffee fruits detected", {
-                    'reason': 'no_detections',
-                    'strong_count': 0, 
-                    'rules': self.get_qa_rules()
+            if is_sketch:
+                return False, f"QA Reject: Artificial/Sketch detected ({sketch_msg})", {
+                    'reason': 'sketch_detected', 'sketch_metric': metric
                 }
-            
+
+            # ===== STAGE 2: YOLO Object Presence & Geometry =====
+            results = self.yolo(image_path, verbose=False)[0]
             boxes = results.boxes.xyxy.cpu().numpy()
             scores = results.boxes.conf.cpu().numpy()
             
@@ -167,8 +170,7 @@ class HybridModel:
             for i, (box, score) in enumerate(zip(boxes, scores)):
                 x1, y1, x2, y2 = box
                 area = (x2 - x1) * (y2 - y1)
-                
-                # Filter by minimum confidence
+                # Filter by confidence
                 if score >= self.qa_min_conf:
                     strong_boxes.append(box)
                     total_box_area += area
@@ -178,48 +180,64 @@ class HybridModel:
             total_area_ratio = self.safe_div(total_box_area, img_area)
             
             qa_report = {
+                'reason': 'checking',
                 'strong_count': strong_count,
                 'max_conf': float(max_conf),
                 'total_area_ratio': float(total_area_ratio),
-                'sketch_metric': float(metric),
                 'rules': self.get_qa_rules()
             }
             
-            # --- RULE 1: Strong Detection Count ---
-            if strong_count < 1:
-                qa_report['reason'] = 'insufficient_strong_boxes'
-                return False, "QA Reject: No confident coffee detections", qa_report
-            
-            # --- RULE 2: Total Area (Too small = noise, Too big = close-up/blob) ---
+            # [CRITICAL] Rule: Minimum Fruits (Domain Requirement)
+            if strong_count < self.qa_min_fruits:
+                qa_report['reason'] = 'insufficient_fruits'
+                return False, f"QA Reject: Found only {strong_count} fruits (Min {self.qa_min_fruits} required)", qa_report
+
+            # [CRITICAL] Rule: Area Constraints (Too small=noise, Too big=close-up/blob)
             if total_area_ratio < self.qa_min_total_area:
-                qa_report['reason'] = 'area_too_small'
-                return False, "QA Reject: Detected objects too small (likely noise)", qa_report
-                
-            if total_area_ratio > self.qa_max_total_area:
-                qa_report['reason'] = 'area_too_large'
-                return False, "QA Reject: Detected area too large (wrong subject)", qa_report
-                
-            # --- RULE 3: Central Region Check ---
-            # At least one strong box should touch the central region (reject corner noise)
-            if not self._check_central_region(strong_boxes, w, h):
-                qa_report['reason'] = 'peripheral_detections_only'
-                return False, "QA Reject: Objects only found at edges (likely noise)", qa_report
-
-            # --- RULE 4: Sketch/Noise Confirmation ---
-            # If it looks like a sketch AND we barely passed YOLO (only 1 box), be stricter
-            if is_sketch and strong_count < 2:
-                 qa_report['reason'] = f'sketch_heuristic_fail_{sketch_msg}'
-                 return False, f"QA Reject: Image looks like sketch/drawing ({sketch_msg})", qa_report
-
-            # ===== STAGE B: Optional Classifier Check (Hybrid/EffNet only) =====
-            # If using EffNet/Hybrid, ensure EffNet doesn't completely disagree
-            # skip for pure YOLO mode to keep it fast/pure
-            if mode != 'yolo':
-                 # (Logic kept lightweight: if YOLO says yes strongly, we trust it, 
-                 # unless we implemented a specific "Not Coffee" class in EffNet, which we haven't trained yet.
-                 # So we rely on the strong YOLO checks above.)
-                 pass
+                 qa_report['reason'] = 'area_too_small'
+                 return False, "QA Reject: Objects too small/distant", qa_report
             
+            if total_area_ratio > self.qa_max_total_area:
+                 qa_report['reason'] = 'area_too_large'
+                 return False, "QA Reject: Objects too large/close-up", qa_report
+
+            # [CRITICAL] Rule: Aspect Ratio (Valid shapes)
+            valid_shapes, avg_ratio = self._check_aspect_ratios(strong_boxes)
+            qa_report['avg_aspect_ratio'] = avg_ratio
+            if not valid_shapes:
+                qa_report['reason'] = 'invalid_object_geometry'
+                return False, f"QA Reject: Invalid object shapes (Avg ratio {avg_ratio:.2f})", qa_report
+
+            # [CRITICAL] Rule: Central Focus
+            if not self._check_central_region(strong_boxes, w, h):
+                qa_report['reason'] = 'peripheral_only'
+                return False, "QA Reject: No central detections", qa_report
+
+            # ===== STAGE 3: EfficientNet Domain Validation (Semantic Check) =====
+            # Run this for ALL modes to ensure domain correctness as requested
+            try:
+                img_pil = Image.open(image_path).convert('RGB')
+                img_tensor = self.transform(img_pil).unsqueeze(0).to(self.device)
+                
+                with torch.no_grad():
+                    output = self.effnet(img_tensor)
+                    probs = torch.softmax(output, dim=1)[0]
+                    effnet_max, _ = torch.max(probs, 0)
+                    effnet_conf = float(effnet_max.item())
+                
+                qa_report['effnet_domain_conf'] = effnet_conf
+                
+                # [CRITICAL] Rule: Semantic Confidence
+                if effnet_conf < self.qa_effnet_min_conf:
+                    qa_report['reason'] = 'low_domain_confidence'
+                    return False, f"QA Reject: Classification confidence too low ({effnet_conf:.2f}). Not coffee.", qa_report
+            except Exception as e:
+                print(f"[WARNING] EffNet Domain Check Failed: {e}")
+                # If checking fails, fallback to strict YOLO only? Or fail safe?
+                # Fail safe: Reject if we can't verify domain
+                return False, "QA Reject: Domain check error", qa_report
+
+            # PASS
             qa_report['passed'] = True
             qa_report['reason'] = 'passed_all_checks'
             return True, "QA Pass: Valid coffee fruit image", qa_report
@@ -230,7 +248,7 @@ class HybridModel:
             return False, "QA Reject: Processing error", {'reason': 'exception', 'error': str(e)}
 
     def predict_yolo_only(self, image_path: str) -> Dict:
-        """Mode A: YOLO-Only prediction with calibrated classification belief."""
+        """Mode A: YOLO-Only prediction with dynamic confidence."""
         results = self.yolo(image_path, verbose=False)[0]
         boxes = results.boxes.xyxy.cpu().numpy()
         scores = results.boxes.conf.cpu().numpy()
@@ -242,9 +260,8 @@ class HybridModel:
         
         for i, box in enumerate(boxes):
             x1, y1, x2, y2 = map(int, box)
-            conf = float(scores[i]) # Objectness/Detection confidence
+            conf = float(scores[i]) 
             
-            # Get class name
             if classes is not None:
                 cls_idx = int(classes[i])
                 cls_name = self.classes[cls_idx] if cls_idx < len(self.classes) else 'Ripe'
@@ -260,14 +277,10 @@ class HybridModel:
             class_counts[cls_name] += 1
             class_raw_confs[cls_name].append(conf)
         
-        # Determine final label (Majority Vote)
         if predictions:
             final_label = max(class_counts, key=class_counts.get)
-            
-            # CALIBRATION: Mean of class confidences, capped at 0.75
-            # This represents "Classification Belief" rather than just object detection certainty
-            raw_cls_conf = np.mean(class_raw_confs[final_label]) if class_raw_confs[final_label] else 0.0
-            final_confidence = min(float(raw_cls_conf), 0.75)
+            raw_cls_conf = np.mean(class_raw_confs[final_label])
+            final_confidence = float(raw_cls_conf)
         else:
             final_label = 'None'
             final_confidence = 0.0
@@ -276,7 +289,7 @@ class HybridModel:
             'mode': 'YOLO',
             'predictions': predictions,
             'final_label': final_label,
-            'final_confidence': final_confidence,
+            'final_confidence': round(final_confidence, 4),
             'distribution': class_counts,
             'fruits_detected': len(predictions)
         }
@@ -292,13 +305,12 @@ class HybridModel:
             conf, cls_idx = torch.max(probs, 0)
         
         final_label = self.classes[cls_idx.item()]
+        final_confidence = float(conf.item())
         
-        # CALIBRATION: Raw softmax, capped at 0.75
-        # No artificial boosting allowed here
-        final_confidence = min(float(conf.item()), 0.75)
-        
-        distribution = {cls: 0 for cls in self.classes}
-        distribution[final_label] = 1
+        distribution = {
+            cls_name: float(probs[i].item()) 
+            for i, cls_name in enumerate(self.classes)
+        }
         
         return {
             'mode': 'EfficientNet',
@@ -308,13 +320,13 @@ class HybridModel:
                 'confidence': final_confidence
             }],
             'final_label': final_label,
-            'final_confidence': final_confidence,
+            'final_confidence': round(final_confidence, 4),
             'distribution': distribution,
             'fruits_detected': 1
         }
 
     def predict_hybrid(self, image_path: str) -> Dict:
-        """Mode C: Hybrid prediction with STRICT AGREEMENT-BASED fusion."""
+        """Mode C: Hybrid prediction with Calibrated Agreement Fusion."""
         # 1. Run YOLO (Object Presence)
         results = self.yolo(image_path, verbose=False)[0]
         boxes = results.boxes.xyxy.cpu().numpy()
@@ -339,14 +351,12 @@ class HybridModel:
             class_counts[cls_name] += 1
             class_raw_confs[cls_name].append(conf)
             
-        # YOLO Metrics
         if predictions:
             yolo_label = max(class_counts, key=class_counts.get)
-            yolo_raw_avg = np.mean(class_raw_confs[yolo_label]) if class_raw_confs[yolo_label] else 0.0
-            yolo_class_conf = min(float(yolo_raw_avg), 0.75) # Cap at 0.75
+            yolo_conf = float(np.mean(class_raw_confs[yolo_label]))
         else:
             yolo_label = 'None'
-            yolo_class_conf = 0.0
+            yolo_conf = 0.0
 
         # 2. Run EfficientNet (Global Context)
         img_pil = Image.open(image_path).convert('RGB')
@@ -358,44 +368,68 @@ class HybridModel:
             effnet_raw, cls_idx = torch.max(probs, 0)
             
         effnet_label = self.classes[cls_idx.item()]
-        effnet_conf = min(float(effnet_raw.item()), 0.75) # Cap at 0.75
+        effnet_conf = float(effnet_raw.item())
 
-        # 3. Fusion Logic
+        # 3. Fusion Logic (Semantic Agreement)
         agreement = (yolo_label == effnet_label) and (yolo_label != 'None')
         
+        # Base confidences
+        cy = yolo_conf
+        ce = effnet_conf
+        
+        # Threshold for boosting
+        boost_thresh = 0.65
+        
         if agreement:
-            # Formula: 1 - (1 - P1) * (1 - P2)
-            hybrid_raw = 1.0 - ((1.0 - yolo_class_conf) * (1.0 - effnet_conf))
-            
-            # Mild reinforcement: min(hybrid * 1.05, 0.98 in formula, but user said 0.95 allowed)
-            # We use 0.95 as the hard clamp as requested in "Validation Rules"
-            hybrid_boosted = hybrid_raw * 1.05
-            hybrid_conf = min(hybrid_boosted, 0.95)
-            
-            # Sanity Check: Must be strictly higher than individual models
-            # (Mathematically true for probabilistic OR unless inputs are 1.0)
-            hybrid_conf = max(hybrid_conf, yolo_class_conf + 0.01, effnet_conf + 0.01)
-            hybrid_conf = min(hybrid_conf, 0.95) # Re-clamp
-            
+            if cy >= boost_thresh and ce >= boost_thresh:
+                # Strong Agreement: Boost above individuals
+                # Weighted toward the higher confidence + bonus
+                base = max(cy, ce)
+                hybrid_conf = min(base + 0.05, 0.99)
+                status_msg = "Agreement (Boosted)"
+            else:
+                # Weak Agreement: Average
+                hybrid_conf = (cy + ce) / 2.0
+                status_msg = "Agreement (Weak)"
             final_label = yolo_label
-            status_msg = "High confidence due to model agreement"
         else:
-            # Disagreement: No boost, take minimum
-            hybrid_conf = min(yolo_class_conf, effnet_conf)
-            final_label = yolo_label # Trust YOLO for object presence/label
-            status_msg = "Model Disagreement - Confidence Penalized"
+            # Disagreement: Penalize
+            # Hybrid confidence should NOT exceed the individual models
+            # Logic: Trust the more confident one, but reduce confidence because of disagreement
+            
+            if cy > ce:
+                final_label = yolo_label
+                hybrid_conf = cy * 0.85 
+                status_msg = "Disagreement (YOLO Favored)"
+            else:
+                final_label = effnet_label
+                hybrid_conf = ce * 0.85
+                status_msg = "Disagreement (EffNet Favored)"
+
+        # Final Clamp (Realism)
+        hybrid_conf = float(min(max(hybrid_conf, 0.0), 1.0))
+
+        # Debug Logs
+        print(f"\n[HYBRID FUSION]")
+        print(f"  YOLO: {yolo_label} ({yolo_conf:.4f})")
+        print(f"  EffNet: {effnet_label} ({effnet_conf:.4f})")
+        print(f"  Agreement: {agreement}")
+        print(f"  Hybrid: {hybrid_conf:.4f}")
+        print(f"  Status: {status_msg}")
 
         return {
             'mode': 'Hybrid',
             'predictions': predictions,
             'final_label': final_label,
-            'final_confidence': float(hybrid_conf),
+            'final_confidence': round(hybrid_conf, 4),
             'distribution': class_counts,
             'fruits_detected': len(predictions),
             'agreement': agreement,
             'status_msg': status_msg,
-            'yolo_conf': yolo_class_conf,
-            'effnet_conf': effnet_conf
+            'yolo_confidence': round(yolo_conf, 4),
+            'eff_confidence': round(effnet_conf, 4),
+            'yolo_label': yolo_label,
+            'eff_label': effnet_label
         }
 
     def draw_annotations(self, image_path: str, predictions: List[Dict]) -> np.ndarray:

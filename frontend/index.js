@@ -164,13 +164,8 @@ async function runPrediction() {
             // CLEAR ALL PREVIOUS RESULTS
             clearResults();
 
-            // Show detailed rejection message
-            let rejectMsg = data.message || data.qa_message || "QA Failed";
-            if (data.qa && data.qa.reason) {
-                rejectMsg += ` (${data.qa.reason})`;
-            }
-
-            showAlert(`❌ ${rejectMsg}`, "error");
+            // Show simple rejection message
+            showAlert("❌ QA Rejected", "error");
             console.warn('[QA REJECT]', data.qa);
             return;
         }
