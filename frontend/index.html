@@ -207,6 +207,10 @@
                             </div>
                         </div>
 
+                        <div id="class-breakdown" class="class-breakdown hidden">
+                            <!-- Populated by JS -->
+                        </div>
+
                         <div class="distribution-section">
                             <label>Class Distribution</label>
                             <div class="distribution-bar">
@@ -273,18 +277,18 @@
                 <div class="card">
                     <h3>Model Evaluation</h3>
                     <p class="card-subtitle">Training performance on validation dataset</p>
-                    <div class="chart-container">
-                        <img id="chart-cm" src="" alt="Confusion Matrix"
-                            onerror="this.parentElement.innerHTML='<p class=chart-placeholder>Training artifacts not available</p>'">
+                    <div class="chart-container" id="container-cm">
+                        <img id="chart-cm" src="" alt="Confusion Matrix" class="chart-img">
+                        <p id="placeholder-cm" class="chart-placeholder hidden">Training artifacts not available</p>
                     </div>
                 </div>
 
                 <div class="card">
                     <h3>Training Curves</h3>
                     <p class="card-subtitle">Loss and accuracy over epochs</p>
-                    <div class="chart-container">
-                        <img id="chart-curves" src="" alt="Training Curves"
-                            onerror="this.parentElement.innerHTML='<p class=chart-placeholder>Training artifacts not available</p>'">
+                    <div class="chart-container" id="container-curves">
+                        <img id="chart-curves" src="" alt="Training Curves" class="chart-img">
+                        <p id="placeholder-curves" class="chart-placeholder hidden">Training artifacts not available</p>
                     </div>
                 </div>
             </div>

@@ -581,6 +581,42 @@ body {
     font-weight: 600;
 }
 
+.class-breakdown {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.class-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.class-stat.unripe {
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.class-stat.ripe {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.class-stat.overripe {
+    border-color: rgba(139, 115, 85, 0.3);
+}
+
+.class-stat span {
+    font-weight: 600;
+}
+
 .label-unripe {
     color: var(--unripe);
 }
@@ -681,6 +717,19 @@ body {
 .chart-placeholder {
     color: var(--text-muted);
     font-size: 13px;
+    display: none;
+}
+
+.chart-container.error .chart-img {
+    display: none;
+}
+
+.chart-container.error .chart-placeholder {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
 }
 
 .insights-grid {

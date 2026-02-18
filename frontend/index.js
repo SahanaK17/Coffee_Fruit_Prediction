@@ -234,8 +234,36 @@ function displayResults(data) {
     // Count
     document.getElementById('res-count').textContent = data.fruits_detected;
 
-    // Distribution
+    // Class Breakdown (YOLO/Hybrid only)
+    const breakdownEl = document.getElementById('class-breakdown');
+    breakdownEl.innerHTML = ''; // Clear previous
+    breakdownEl.classList.add('hidden');
+
     const dist = data.distribution;
+
+    if (data.mode !== 'EfficientNet' && data.fruits_detected > 0) {
+        breakdownEl.classList.remove('hidden');
+
+        ['Unripe', 'Ripe', 'Overripe'].forEach(cls => {
+            const count = dist[cls];
+            if (count > 0) {
+                const badge = document.createElement('div');
+                badge.className = `class-stat ${cls.toLowerCase()}`;
+                // Add dot
+                const dot = document.createElement('i');
+                dot.className = `legend-dot ${cls.toLowerCase()}`;
+
+                const text = document.createTextNode(`${cls}: `);
+                const val = document.createElement('span');
+                val.textContent = count;
+
+                badge.appendChild(dot);
+                badge.appendChild(text);
+                badge.appendChild(val);
+                breakdownEl.appendChild(badge);
+            }
+        });
+    }
     const total = dist.Unripe + dist.Ripe + dist.Overripe;
 
     // Toggle thick bar for agreement
@@ -297,13 +325,29 @@ async function loadAnalytics() {
         const data = await response.json();
         const ts = Date.now();
 
-        if (data.training_curves) {
-            document.getElementById('chart-curves').src = `${API_URL}${data.training_curves}?t=${ts}`;
-        }
+        // Helper to load image
+        const loadImage = (imgId, containerId, srcPath) => {
+            const img = document.getElementById(imgId);
+            const container = document.getElementById(containerId);
 
-        if (data.confusion_matrix) {
-            document.getElementById('chart-cm').src = `${API_URL}${data.confusion_matrix}?t=${ts}`;
-        }
+            if (!img || !container) return;
+
+            if (srcPath) {
+                img.onload = () => {
+                    container.classList.remove('error');
+                };
+                img.onerror = () => {
+                    container.classList.add('error');
+                };
+                img.src = `${API_URL}${srcPath}?t=${ts}`;
+            } else {
+                container.classList.add('error');
+            }
+        };
+
+        loadImage('chart-curves', 'container-curves', data.training_curves);
+        loadImage('chart-cm', 'container-cm', data.confusion_matrix);
+
     } catch (e) {
         console.warn("Analytics load failed:", e);
     }

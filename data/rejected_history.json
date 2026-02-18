@@ -26,5 +26,285 @@
     "qa_pass": false,
     "qa_reason": "insufficient_fruits",
     "timestamp": "2026-02-16T13:07:12.993521"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T16:15:30.895127"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-02-16T16:15:42.141368"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T16:43:10.428896"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T16:43:38.182475"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "low_domain_confidence",
+    "timestamp": "2026-02-16T16:43:52.706363"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T16:45:04.538871"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T16:45:18.176143"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "low_domain_confidence",
+    "timestamp": "2026-02-16T16:45:34.004676"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-02-16T16:48:00.324548"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-02-16T16:49:20.231267"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "low_domain_confidence",
+    "timestamp": "2026-02-16T16:59:38.456418"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T17:06:14.097115"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-02-16T17:06:24.824879"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-16T17:06:35.100479"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-18T15:06:10.832207"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-18T15:06:16.781628"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-18T15:06:21.495061"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-18T15:07:46.152411"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-02-18T15:12:10.973178"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-18T15:37:46.113928"
   }
 ]
