@@ -1,6 +1,9 @@
 const API_URL = "http://localhost:8000";
 
 let currentFile = null;
+let batchFiles = [];
+let lastPredictionData = null;
+let originalImageBase64 = null;
 
 // ==================== NAVIGATION ====================
 function showPage(pageId) {
@@ -81,6 +84,13 @@ function handleFiles(files) {
     }
 
     currentFile = file;
+    // For PDF report fallback
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        originalImageBase64 = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
     showPreview(file);
     document.getElementById('predict-btn').disabled = false;
     hideAlert();
@@ -151,6 +161,7 @@ async function runPrediction() {
         }
 
         const data = await response.json();
+        lastPredictionData = data; // Store for PDF report
 
         // Log QA report for debugging
         if (data.qa) {
@@ -164,8 +175,9 @@ async function runPrediction() {
             // CLEAR ALL PREVIOUS RESULTS
             clearResults();
 
-            // Show simple rejection message
-            showAlert("❌ QA Rejected", "error");
+            // Show rejection reason from server
+            const reason = data.message || "QA Rejected";
+            showAlert(`❌ ${reason}`, "error");
             console.warn('[QA REJECT]', data.qa);
             return;
         }
@@ -304,11 +316,55 @@ function displayResults(data) {
         }
     }
 
-    downloadBtn.href = img.src;
+    downloadBtn.onclick = (e) => {
+        e.preventDefault();
+        downloadPDFReport();
+    };
+    downloadBtn.innerHTML = "📄 Download Research PDF";
     downloadBtn.classList.remove('hidden');
 
     // Scroll to results
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function downloadPDFReport() {
+    if (!lastPredictionData) return;
+
+    // Ensure original image is included for report fallback
+    const reportData = {
+        ...lastPredictionData,
+        original_image: originalImageBase64
+    };
+
+    const btn = document.getElementById('download-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "⌛ Generating PDF...";
+    btn.style.pointerEvents = "none";
+
+    try {
+        const response = await fetch(`${API_URL}/predict/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reportData)
+        });
+
+        if (!response.ok) throw new Error("Failed to generate PDF");
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `CoffeeAI_Report_${new Date().getTime()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("PDF Export Error:", error);
+        alert("Failed to generate PDF report.");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.style.pointerEvents = "auto";
+    }
 }
 
 function clearResults() {
@@ -361,9 +417,10 @@ async function loadDashboard() {
 
         const data = await response.json();
         const history = data.history || [];
+        const total = data.total || history.length;
 
         // Total predictions
-        document.getElementById('dash-total').textContent = history.length;
+        document.getElementById('dash-total').textContent = total;
 
         // Calculate averages by mode
         const yoloItems = history.filter(h => h.mode === 'YOLO');
@@ -384,6 +441,125 @@ async function loadDashboard() {
     } catch (e) {
         console.warn("Dashboard load failed:", e);
     }
+}
+
+function exportToCSV() {
+    window.location.href = `${API_URL}/data/export/csv`;
+}
+
+// ==================== BATCH PROCESSING ====================
+function handleBatchFiles(files) {
+    const newFiles = Array.from(files).slice(0, 10); // Limit to 10
+    batchFiles = newFiles;
+
+    const container = document.getElementById('batch-list-container');
+    const countLabel = document.getElementById('batch-count');
+    const queue = document.getElementById('batch-queue');
+
+    if (batchFiles.length > 0) {
+        container.classList.remove('hidden');
+        countLabel.textContent = `${batchFiles.length} images selected`;
+        renderBatchQueue();
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+function renderBatchQueue() {
+    const queue = document.getElementById('batch-queue');
+    queue.innerHTML = '';
+
+    batchFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.style = "display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 13px;";
+        item.innerHTML = `
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">${file.name}</span>
+            <span style="color: var(--text-muted); font-size: 11px;">${(file.size / 1024).toFixed(0)} KB</span>
+        `;
+        queue.appendChild(item);
+    });
+}
+
+function clearBatch() {
+    batchFiles = [];
+    document.getElementById('batch-list-container').classList.add('hidden');
+    document.getElementById('batch-results-grid').classList.add('hidden');
+    document.getElementById('batchFileElem').value = '';
+}
+
+async function runBatchPrediction() {
+    if (batchFiles.length === 0) return;
+
+    const btn = document.getElementById('batch-run-btn');
+    const spinner = btn.querySelector('.spinner');
+    const btnText = btn.querySelector('.btn-text');
+
+    btn.disabled = true;
+    btnText.textContent = "Processing Batch...";
+    spinner.classList.remove('hidden');
+
+    const formData = new FormData();
+    batchFiles.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        const response = await fetch(`${API_URL}/predict/batch`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("Batch processing failed");
+
+        const data = await response.json();
+        displayBatchResults(data.results);
+
+    } catch (error) {
+        showAlert(`Batch failed: ${error.message}`, "error");
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = "Process Batch";
+        spinner.classList.add('hidden');
+    }
+}
+
+function displayBatchResults(results) {
+    const grid = document.getElementById('batch-results-grid');
+    grid.innerHTML = '';
+    grid.classList.remove('hidden');
+
+    results.forEach(res => {
+        const card = document.createElement('div');
+        card.className = "card";
+        card.style = "padding: 1.25rem; border-left: 4px solid " + (res.ok ? "var(--success)" : "var(--error)");
+
+        if (res.ok) {
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <h4 style="font-size: 14px; margin: 0; overflow: hidden; text-overflow: ellipsis;">${res.filename}</h4>
+                    <span class="badge badge-hybrid">Hybrid</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                    <div>
+                        <label style="font-size: 10px; color: var(--text-muted); display: block;">Label</label>
+                        <span style="font-weight: 600; font-size: 15px; color: var(--primary);">${res.final_label}</span>
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; color: var(--text-muted); display: block;">Confidence</label>
+                        <span style="font-weight: 600; font-size: 15px;">${(res.final_confidence * 100).toFixed(1)}%</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            card.innerHTML = `
+                <h4 style="font-size: 14px; margin-bottom: 0.5rem;">${res.filename}</h4>
+                <p style="color: var(--error); font-size: 12px; margin: 0;">❌ ${res.message || "QA Rejected"}</p>
+            `;
+        }
+        grid.appendChild(card);
+    });
+
+    grid.scrollIntoView({ behavior: 'smooth' });
 }
 
 // ==================== HEALTH CHECK ====================

@@ -36,13 +36,9 @@
                 <span class="icon">📈</span>
                 <span>Analytics</span>
             </a>
-            <a href="#" class="nav-item" onclick="showPage('pipeline')">
-                <span class="icon">🔄</span>
-                <span>Pipeline</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showPage('models')">
-                <span class="icon">🧠</span>
-                <span>Models</span>
+            <a href="#" class="nav-item" onclick="showPage('batch')">
+                <span class="icon">📦</span>
+                <span>Batch</span>
             </a>
         </nav>
 
@@ -61,8 +57,13 @@
         <!-- ========== DASHBOARD PAGE ========== -->
         <section id="dashboard-page" class="page">
             <div class="page-header">
-                <h1>Dashboard</h1>
-                <p>System overview and quick stats</p>
+                <div class="header-content">
+                    <h1>Dashboard</h1>
+                    <p>System overview and quick stats</p>
+                </div>
+                <button class="btn-secondary" onclick="exportToCSV()">
+                    <span class="icon">📥</span> Export History
+                </button>
             </div>
 
             <div class="metrics-row">
@@ -316,163 +317,50 @@
             </div>
         </section>
 
-        <!-- ========== PIPELINE PAGE ========== -->
-        <section id="pipeline-page" class="page">
+        <!-- ========== BATCH PAGE ========== -->
+        <section id="batch-page" class="page">
             <div class="page-header">
-                <h1>Hybrid Architecture Pipeline</h1>
-                <p>Multi-stage processing workflow</p>
-            </div>
-
-            <div class="card">
-                <div class="pipeline-flow">
-                    <div class="pipeline-step">
-                        <div class="step-number">1</div>
-                        <h4>Input Image</h4>
-                        <p>Coffee fruit image upload</p>
-                    </div>
-                    <div class="pipeline-arrow">→</div>
-                    <div class="pipeline-step">
-                        <div class="step-number">2</div>
-                        <h4>YOLO Detection</h4>
-                        <p>Bounding box localization</p>
-                    </div>
-                    <div class="pipeline-arrow">→</div>
-                    <div class="pipeline-step">
-                        <div class="step-number">3</div>
-                        <h4>ROI Cropping</h4>
-                        <p>Extract fruit regions</p>
-                    </div>
-                    <div class="pipeline-arrow">→</div>
-                    <div class="pipeline-step">
-                        <div class="step-number">4</div>
-                        <h4>EfficientNet</h4>
-                        <p>Per-fruit classification</p>
-                    </div>
-                    <div class="pipeline-arrow">→</div>
-                    <div class="pipeline-step">
-                        <div class="step-number">5</div>
-                        <h4>Confidence Fusion</h4>
-                        <p>Weighted aggregation</p>
-                    </div>
-                    <div class="pipeline-arrow">→</div>
-                    <div class="pipeline-step">
-                        <div class="step-number">6</div>
-                        <h4>Final Prediction</h4>
-                        <p>Maturity classification</p>
-                    </div>
+                <div class="header-content">
+                    <h1>Batch Processing</h1>
+                    <p>Analyze multiple images at once (Max 10 images)</p>
                 </div>
             </div>
 
             <div class="card">
-                <h3>Fusion Logic</h3>
-                <p class="card-subtitle">Weighted confidence aggregation formula</p>
-                <div class="formula-box">
-                    <p class="formula">
-                        C<sub>final</sub> = α × C<sub>EfficientNet</sub> + (1 − α) × C<sub>YOLO</sub>
-                    </p>
-                    <p class="formula-meta">where α = 0.65</p>
-                </div>
-                <div class="fusion-explanation">
-                    <p><strong>Rationale:</strong> EfficientNet receives higher weight (65%) due to superior feature
-                        extraction capabilities for fine-grained classification. YOLO contributes spatial context (35%)
-                        to maintain detection awareness.</p>
-                </div>
-            </div>
-
-            <div class="content-grid">
-                <div class="card">
-                    <h3>QA Gate</h3>
-                    <p class="card-text">Images must pass quality checks before entering the pipeline:</p>
-                    <ul class="feature-list">
-                        <li>Minimum confidence threshold: 0.25</li>
-                        <li>Minimum bounding box area: 100px²</li>
-                        <li>At least one strong detection required</li>
-                    </ul>
+                <h3>Bulk Upload</h3>
+                <div id="batch-drop-area" class="upload-zone">
+                    <input type="file" id="batchFileElem" multiple accept="image/jpeg,image/png,image/jpg,image/webp"
+                        onchange="handleBatchFiles(this.files)">
+                    <div class="upload-placeholder">
+                        <span class="upload-icon">📁</span>
+                        <p>Drag & Drop or <span class="link-text">Click to Browse</span></p>
+                        <small>Select up to 10 images • JPG, PNG, WEBP</small>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3>Aggregation Strategy</h3>
-                    <p class="card-text">Final prediction derived through:</p>
-                    <ul class="feature-list">
-                        <li>Majority voting across detected fruits</li>
-                        <li>Average confidence of majority class</li>
-                        <li>Per-fruit fusion before global aggregation</li>
-                    </ul>
+                <div id="batch-list-container" class="batch-list-container hidden">
+                    <div class="batch-header"
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span id="batch-count" style="font-weight: 600;">0 images selected</span>
+                        <button class="btn-text"
+                            style="background: none; border: none; color: var(--primary); cursor: pointer;"
+                            onclick="clearBatch()">Clear All</button>
+                    </div>
+                    <div id="batch-queue" class="batch-queue"
+                        style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button id="batch-run-btn" class="btn-primary" onclick="runBatchPrediction()">
+                        <span class="btn-text">Process Batch</span>
+                        <div class="spinner hidden"></div>
+                    </button>
                 </div>
             </div>
-        </section>
 
-        <!-- ========== MODELS PAGE ========== -->
-        <section id="models-page" class="page">
-            <div class="page-header">
-                <h1>Model Information</h1>
-                <p>Architecture comparison and specifications</p>
-            </div>
-
-            <div class="card">
-                <h3>Model Comparison</h3>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Model</th>
-                            <th>Type</th>
-                            <th>Strength</th>
-                            <th>Weakness</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>YOLO v11</strong></td>
-                            <td>Object Detection</td>
-                            <td>Real-time multi-object localization</td>
-                            <td>Coarse classification features</td>
-                        </tr>
-                        <tr>
-                            <td><strong>EfficientNet-B0</strong></td>
-                            <td>Image Classifier</td>
-                            <td>Superior feature extraction</td>
-                            <td>No spatial awareness</td>
-                        </tr>
-                        <tr class="highlight-row">
-                            <td><strong>Hybrid</strong></td>
-                            <td>Fusion System</td>
-                            <td>Balanced confidence, reduced variance</td>
-                            <td>Computational overhead</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="content-grid">
-                <div class="card">
-                    <h3>YOLO v11</h3>
-                    <ul class="feature-list">
-                        <li><strong>Type:</strong> Real-time object detection</li>
-                        <li><strong>Task:</strong> Bounding box prediction</li>
-                        <li><strong>Capability:</strong> Multi-object detection</li>
-                        <li><strong>Output:</strong> Box coordinates + class scores</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <h3>EfficientNet-B0</h3>
-                    <ul class="feature-list">
-                        <li><strong>Type:</strong> Convolutional Neural Network</li>
-                        <li><strong>Task:</strong> Global image classification</li>
-                        <li><strong>Capability:</strong> Feature scaling optimization</li>
-                        <li><strong>Output:</strong> Class probabilities (softmax)</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <h3>Hybrid System</h3>
-                    <ul class="feature-list">
-                        <li><strong>Type:</strong> Weighted fusion architecture</li>
-                        <li><strong>Task:</strong> Confidence optimization</li>
-                        <li><strong>Capability:</strong> Variance reduction</li>
-                        <li><strong>Output:</strong> Calibrated final predictions</li>
-                    </ul>
-                </div>
+            <div id="batch-results-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;"
+                class="hidden">
+                <!-- Results cards will be added here -->
             </div>
         </section>
 

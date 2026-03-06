@@ -160,6 +160,13 @@ body {
 
 .page-header {
     margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.header-content {
+    flex: 1;
 }
 
 .page-header h1 {
@@ -451,6 +458,25 @@ body {
 
 .btn-block {
     margin-top: var(--spacing);
+}
+
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--border);
+    border-color: var(--primary);
 }
 
 .spinner {
@@ -757,127 +783,7 @@ body {
     line-height: 1.5;
 }
 
-/* ==================== PIPELINE ==================== */
-.pipeline-flow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32px 0;
-    overflow-x: auto;
-}
 
-.pipeline-step {
-    text-align: center;
-    min-width: 140px;
-}
-
-.step-number {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    margin: 0 auto 12px;
-}
-
-.pipeline-step h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.pipeline-step p {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.pipeline-arrow {
-    font-size: 20px;
-    color: var(--text-muted);
-    margin: 0 8px;
-}
-
-.formula-box {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.formula {
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-}
-
-.formula-meta {
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
-.fusion-explanation {
-    padding: 16px;
-    background: rgba(198, 124, 78, 0.05);
-    border-left: 3px solid var(--primary);
-    border-radius: 4px;
-}
-
-.fusion-explanation p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-}
-
-.feature-list {
-    list-style: none;
-    padding: 0;
-}
-
-.feature-list li {
-    padding: 10px 0;
-    font-size: 13px;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border);
-}
-
-.feature-list li:last-child {
-    border-bottom: none;
-}
-
-/* ==================== MODELS ==================== */
-.comparison-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.comparison-table th,
-.comparison-table td {
-    padding: 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-}
-
-.comparison-table th {
-    background: rgba(255, 255, 255, 0.03);
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-
-.comparison-table td {
-    color: var(--text-secondary);
-}
-
-.comparison-table .highlight-row {
-    background: rgba(198, 124, 78, 0.05);
-}
 
 /* ==================== UTILITIES ==================== */
 .hidden {
@@ -915,15 +821,6 @@ body {
     .content-grid,
     .insights-grid {
         grid-template-columns: 1fr;
-    }
-
-    .pipeline-flow {
-        flex-direction: column;
-    }
-
-    .pipeline-arrow {
-        transform: rotate(90deg);
-        margin: 16px 0;
     }
 }
 

@@ -1268,5 +1268,653 @@
     },
     "fruits_detected": 103,
     "timestamp": "2026-02-18T15:38:05.563080"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-20T11:54:03.204498"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-02-20T11:54:59.291717"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-20T11:55:04.679031"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-02-27T20:39:51.641395"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Overripe",
+    "confidence": 1.0,
+    "distribution": {
+      "Unripe": 4.39908035332337e-07,
+      "Ripe": 4.814616971771102e-08,
+      "Overripe": 0.9999995231628418
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-02-27T20:40:00.447113"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Overripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-02-27T20:40:05.674304"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-27T20:40:42.829215"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-02-27T20:41:00.763395"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-27T20:41:15.801670"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-27T20:41:25.479861"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-27T20:41:40.510322"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-02-27T20:42:19.188123"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7278,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-02-27T20:42:26.430248"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.7275,
+    "distribution": {
+      "Unripe": 0.01412956602871418,
+      "Ripe": 0.7275202870368958,
+      "Overripe": 0.25835010409355164
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-02-27T20:43:24.711766"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-02-27T20:43:32.479951"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Unripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-02-27T20:43:46.813768"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Unripe",
+    "confidence": 0.9997,
+    "distribution": {
+      "Unripe": 0.9997155070304871,
+      "Ripe": 0.0001153292105300352,
+      "Overripe": 0.00016910088015720248
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-02-27T20:43:52.082737"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Unripe",
+    "confidence": 0.7623,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-02-27T20:43:56.958011"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Unripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-02-27T20:44:02.301873"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-02-27T21:29:08.298588"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-02-27T21:41:04.241987"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7278,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-02-27T21:52:58.004015"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Overripe",
+    "confidence": 1.0,
+    "distribution": {
+      "Unripe": 4.39908035332337e-07,
+      "Ripe": 4.814616971771102e-08,
+      "Overripe": 0.9999995231628418
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-02-27T22:01:10.312291"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-02-27T22:03:36.264382"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Overripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-03T12:20:03.962439"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-03T12:20:04.968314"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-03-03T12:20:06.049326"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Unripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-03-03T12:20:06.634126"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-03T12:20:44.169879"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-03T12:45:49.294101"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-03T12:47:07.391991"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-03T15:20:48.117957"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-03T15:21:08.316627"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-03T15:23:07.768221"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-03T15:23:12.348421"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-03T15:23:30.941012"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-03T15:27:12.797717"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Overripe",
+    "confidence": 1.0,
+    "distribution": {
+      "Unripe": 4.39908035332337e-07,
+      "Ripe": 4.814616971771102e-08,
+      "Overripe": 0.9999995231628418
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-03T15:27:22.591251"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Overripe",
+    "confidence": 1.0,
+    "distribution": {
+      "Unripe": 4.39908035332337e-07,
+      "Ripe": 4.814616971771102e-08,
+      "Overripe": 0.9999995231628418
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-03T15:40:17.748559"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-03T15:40:47.762355"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-03T15:41:04.069350"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Overripe",
+    "confidence": 1.0,
+    "distribution": {
+      "Unripe": 4.39908035332337e-07,
+      "Ripe": 4.814616971771102e-08,
+      "Overripe": 0.9999995231628418
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-06T11:54:13.618876"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Overripe",
+    "confidence": 0.9237,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-06T11:55:08.480216"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-06T12:01:13.777536"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7352,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 17,
+      "Overripe": 7
+    },
+    "fruits_detected": 24,
+    "timestamp": "2026-03-06T12:14:25.421093"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-03-06T12:14:25.421093"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Unripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-03-06T12:22:53.970984"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Overripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-06T12:24:15.404327"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-06T12:24:15.404327"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-03-06T12:24:15.404327"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Unripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-03-06T12:24:15.404327"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7352,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 17,
+      "Overripe": 7
+    },
+    "fruits_detected": 24,
+    "timestamp": "2026-03-06T12:32:37.633250"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-03-06T12:32:37.633250"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Overripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-06T12:37:44.823924"
   }
 ]

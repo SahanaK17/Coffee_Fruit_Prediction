@@ -306,5 +306,215 @@
     "qa_pass": false,
     "qa_reason": "insufficient_fruits",
     "timestamp": "2026-02-18T15:37:46.113928"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "checking",
+    "timestamp": "2026-02-20T11:53:40.002316"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-27T20:40:19.826953"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-27T20:40:23.341888"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-27T20:40:28.344149"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-27T20:40:32.149764"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-02-27T20:41:56.706646"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-27T20:42:07.670223"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-02-27T22:00:37.852733"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-03-06T12:21:21.968345"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T12:21:21.968345"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T12:24:15.404327"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T12:37:44.823924"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T12:37:44.823924"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T12:38:59.095652"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T12:50:27.271946"
   }
 ]
