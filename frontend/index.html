@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoffeeAI | M.Tech Research System</title>
+    <meta name="description"
+        content="AI-powered coffee fruit maturity detection using Hybrid YOLO + EfficientNet model">
     <link rel="stylesheet" href="index.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- Sidebar Navigation -->
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
@@ -47,11 +50,11 @@
                 <div id="server-status" class="status-dot"></div>
                 <span id="status-text">Connecting...</span>
             </div>
-            <p class="version">Version 2.0</p>
+            <p class="version">Version 2.0 · Research Build</p>
         </div>
     </aside>
 
-    <!-- Main Content Area -->
+    <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
 
         <!-- ========== DASHBOARD PAGE ========== -->
@@ -59,10 +62,10 @@
             <div class="page-header">
                 <div class="header-content">
                     <h1>Dashboard</h1>
-                    <p>System overview and quick stats</p>
+                    <p>System overview and prediction analytics</p>
                 </div>
                 <button class="btn-secondary" onclick="exportToCSV()">
-                    <span class="icon">📥</span> Export History
+                    <span class="icon">📥</span> Export CSV
                 </button>
             </div>
 
@@ -90,16 +93,16 @@
                     <h3>System Status</h3>
                     <div class="status-list">
                         <div class="status-item">
-                            <span>YOLO Model</span>
-                            <span class="status-badge success">Loaded</span>
+                            <span>YOLO Detection Model</span>
+                            <span class="status-badge success">✓ Loaded</span>
                         </div>
                         <div class="status-item">
-                            <span>EfficientNet Model</span>
-                            <span class="status-badge success">Loaded</span>
+                            <span>EfficientNet Classifier</span>
+                            <span class="status-badge success">✓ Loaded</span>
                         </div>
                         <div class="status-item">
-                            <span>Hybrid Mode</span>
-                            <span class="status-badge success">Active</span>
+                            <span>Hybrid Fusion Engine</span>
+                            <span class="status-badge success">✓ Active</span>
                         </div>
                     </div>
                 </div>
@@ -107,8 +110,9 @@
                 <div class="card">
                     <h3>Quick Start</h3>
                     <p class="card-text">Upload coffee fruit images to analyze maturity using our hybrid deep learning
-                        system.</p>
-                    <button class="btn-primary" onclick="showPage('predict')">Start Prediction</button>
+                        pipeline. Supports YOLO-only, EfficientNet-only, and Hybrid fusion modes.</p>
+                    <button class="btn-primary" onclick="showPage('predict')"
+                        style="width: auto; padding: 11px 24px;">Start Prediction →</button>
                 </div>
             </div>
         </section>
@@ -117,7 +121,7 @@
         <section id="predict-page" class="page active">
             <div class="page-header">
                 <h1>Predict Maturity</h1>
-                <p>Upload images for multi-model analysis</p>
+                <p>Multi-model coffee fruit analysis</p>
             </div>
 
             <div class="predict-grid">
@@ -125,27 +129,27 @@
                 <div class="predict-left">
                     <!-- Model Selection -->
                     <div class="card">
-                        <h3>Model Selection</h3>
+                        <h3>Analysis Model</h3>
                         <div class="model-select-group">
                             <label class="model-select-item">
                                 <input type="radio" name="mode" value="yolo" checked>
                                 <div class="model-select-content">
                                     <h4>YOLO</h4>
-                                    <p>Detection-based classification</p>
+                                    <p>Object detection based</p>
                                 </div>
                             </label>
                             <label class="model-select-item">
                                 <input type="radio" name="mode" value="effnet">
                                 <div class="model-select-content">
-                                    <h4>EfficientNet</h4>
-                                    <p>Whole image classifier</p>
+                                    <h4>EffNet</h4>
+                                    <p>Global classifier</p>
                                 </div>
                             </label>
                             <label class="model-select-item">
                                 <input type="radio" name="mode" value="hybrid">
                                 <div class="model-select-content">
                                     <h4>Hybrid ⭐</h4>
-                                    <p>Weighted fusion confidence</p>
+                                    <p>Fusion model</p>
                                 </div>
                             </label>
                         </div>
@@ -158,9 +162,9 @@
                             <input type="file" id="fileElem" accept="image/jpeg,image/png,image/jpg,image/webp"
                                 onchange="handleFiles(this.files)">
                             <div class="upload-placeholder">
-                                <span class="upload-icon">📁</span>
-                                <p>Drag & Drop or <span class="link-text">Click to Browse</span></p>
-                                <small>JPG, PNG, WEBP • Max 10MB</small>
+                                <span class="upload-icon">🖼️</span>
+                                <p>Drag &amp; Drop or <span class="link-text">Browse Files</span></p>
+                                <small>JPG, PNG, WEBP · Max 10MB</small>
                             </div>
                             <div id="preview-container" class="hidden">
                                 <img id="preview-img" src="" alt="Preview">
@@ -186,11 +190,11 @@
                         </div>
 
                         <div class="result-image-container">
-                            <img id="result-img" src="" alt="Result">
+                            <img id="result-img" src="" alt="Annotated Result">
                         </div>
 
                         <a id="download-btn" class="download-btn hidden" href="#" download="result.jpg">
-                            ⬇ Download Result
+                            📄 Download Research PDF
                         </a>
 
                         <div class="result-metrics">
@@ -240,7 +244,7 @@
         <section id="analytics-page" class="page">
             <div class="page-header">
                 <h1>Analytics</h1>
-                <p>Model performance and evaluation metrics</p>
+                <p>Model performance and training evaluation</p>
             </div>
 
             <div class="metrics-row">
@@ -274,10 +278,10 @@
                 </div>
             </div>
 
-            <div class="content-grid">
+            <div class="content-grid" style="margin-bottom: 24px;">
                 <div class="card">
                     <h3>Model Evaluation</h3>
-                    <p class="card-subtitle">Training performance on validation dataset</p>
+                    <p class="card-subtitle">Confusion matrix on validation dataset</p>
                     <div class="chart-container" id="container-cm">
                         <img id="chart-cm" src="" alt="Confusion Matrix" class="chart-img">
                         <p id="placeholder-cm" class="chart-placeholder hidden">Training artifacts not available</p>
@@ -286,7 +290,7 @@
 
                 <div class="card">
                     <h3>Training Curves</h3>
-                    <p class="card-subtitle">Loss and accuracy over epochs</p>
+                    <p class="card-subtitle">Loss and accuracy over training epochs</p>
                     <div class="chart-container" id="container-curves">
                         <img id="chart-curves" src="" alt="Training Curves" class="chart-img">
                         <p id="placeholder-curves" class="chart-placeholder hidden">Training artifacts not available</p>
@@ -295,7 +299,7 @@
             </div>
 
             <div class="card">
-                <h3>System Insights</h3>
+                <h3>Research Insights</h3>
                 <div class="insights-grid">
                     <div class="insight-item">
                         <span class="insight-icon">🎯</span>
@@ -322,35 +326,38 @@
             <div class="page-header">
                 <div class="header-content">
                     <h1>Batch Processing</h1>
-                    <p>Analyze multiple images at once (Max 10 images)</p>
+                    <p>Analyze multiple coffee fruit images at once · Max 10 images</p>
                 </div>
             </div>
 
             <div class="card">
                 <h3>Bulk Upload</h3>
-                <div id="batch-drop-area" class="upload-zone">
+                <div id="batch-drop-area" class="upload-zone"
+                    onclick="document.getElementById('batchFileElem').click()">
                     <input type="file" id="batchFileElem" multiple accept="image/jpeg,image/png,image/jpg,image/webp"
                         onchange="handleBatchFiles(this.files)">
                     <div class="upload-placeholder">
                         <span class="upload-icon">📁</span>
-                        <p>Drag & Drop or <span class="link-text">Click to Browse</span></p>
-                        <small>Select up to 10 images • JPG, PNG, WEBP</small>
+                        <p>Drag &amp; Drop or <span class="link-text">Browse Files</span></p>
+                        <small>Select up to 10 images · JPG, PNG, WEBP</small>
                     </div>
                 </div>
 
                 <div id="batch-list-container" class="batch-list-container hidden">
-                    <div class="batch-header"
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <span id="batch-count" style="font-weight: 600;">0 images selected</span>
-                        <button class="btn-text"
-                            style="background: none; border: none; color: var(--primary); cursor: pointer;"
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0 12px;">
+                        <span id="batch-count"
+                            style="font-size: 13.5px; font-weight: 600; color: var(--text-primary);">0 images
+                            selected</span>
+                        <button
+                            style="background: none; border: none; color: var(--primary-light); cursor: pointer; font-size: 13px; font-weight: 500;"
                             onclick="clearBatch()">Clear All</button>
                     </div>
-                    <div id="batch-queue" class="batch-queue"
-                        style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <div id="batch-queue" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;">
                         <!-- Populated by JS -->
                     </div>
-                    <button id="batch-run-btn" class="btn-primary" onclick="runBatchPrediction()">
+                    <button id="batch-run-btn" class="btn-primary" onclick="runBatchPrediction()"
+                        style="width: auto; padding: 12px 28px;">
                         <span class="btn-text">Process Batch</span>
                         <div class="spinner hidden"></div>
                     </button>
@@ -358,9 +365,9 @@
             </div>
 
             <div id="batch-results-grid"
-                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; margin-top: 24px;"
                 class="hidden">
-                <!-- Results cards will be added here -->
+                <!-- Result cards added by JS -->
             </div>
         </section>
 

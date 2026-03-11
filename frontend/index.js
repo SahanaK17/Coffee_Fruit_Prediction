@@ -422,17 +422,17 @@ async function loadDashboard() {
         // Total predictions
         document.getElementById('dash-total').textContent = total;
 
-        // Calculate averages by mode
-        const yoloItems = history.filter(h => h.mode === 'YOLO');
-        const effnetItems = history.filter(h => h.mode === 'EfficientNet');
-        const hybridItems = history.filter(h => h.mode === 'Hybrid');
+        // Calculate averages by mode (handle both uppercase and lowercase from DB/API)
+        const yoloItems = history.filter(h => h.mode && h.mode.toLowerCase() === 'yolo');
+        const effnetItems = history.filter(h => h.mode && (h.mode.toLowerCase() === 'effnet' || h.mode.toLowerCase() === 'efficientnet'));
+        const hybridItems = history.filter(h => h.mode && h.mode.toLowerCase() === 'hybrid');
 
         const avgYolo = yoloItems.length ?
-            (yoloItems.reduce((sum, h) => sum + h.confidence, 0) / yoloItems.length * 100).toFixed(0) + '%' : '--';
+            (yoloItems.reduce((sum, h) => sum + (h.final_confidence || 0), 0) / yoloItems.length * 100).toFixed(0) + '%' : '--';
         const avgEffnet = effnetItems.length ?
-            (effnetItems.reduce((sum, h) => sum + h.confidence, 0) / effnetItems.length * 100).toFixed(0) + '%' : '--';
+            (effnetItems.reduce((sum, h) => sum + (h.final_confidence || 0), 0) / effnetItems.length * 100).toFixed(0) + '%' : '--';
         const avgHybrid = hybridItems.length ?
-            (hybridItems.reduce((sum, h) => sum + h.confidence, 0) / hybridItems.length * 100).toFixed(0) + '%' : '--';
+            (hybridItems.reduce((sum, h) => sum + (h.final_confidence || 0), 0) / hybridItems.length * 100).toFixed(0) + '%' : '--';
 
         document.getElementById('dash-yolo').textContent = avgYolo;
         document.getElementById('dash-effnet').textContent = avgEffnet;

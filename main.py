@@ -18,6 +18,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 # Import custom modules
 from src.inference import HybridModel
+from database import CoffeeDatabase
 
 # ===== CONFIGURATION =====
 BASE_DIR = Path(__file__).resolve().parent
@@ -51,6 +52,7 @@ app.add_middleware(
 
 # ===== GLOBAL STATE =====
 model_instance: Optional[HybridModel] = None
+db = CoffeeDatabase()
 system_status = {
     "yolo_loaded": False,
     "effnet_loaded": False,
@@ -92,46 +94,13 @@ def store_prediction(data: dict):
     store_predictions([data])
 
 def store_predictions(data_list: List[dict]):
-    """Store multiple predictions to appropriate history files (Valid or Rejected)."""
+    """Store multiple predictions to the SQLite database."""
     try:
-        # Group by target file to minimize I/O and avoid reload issues
-        valid_items = []
-        rejected_items = []
-        timestamp = datetime.now().isoformat()
-
-        for data in data_list:
-            # Ensure timestamp is present
-            if 'timestamp' not in data:
-                data['timestamp'] = timestamp
+        if not data_list:
+            return
             
-            is_rejected = data.get('final_label') == 'REJECTED'
-            if is_rejected:
-                rejected_items.append(data)
-            else:
-                valid_items.append(data)
-
-        # Process each group
-        for items, target_file, label in [(valid_items, HISTORY_FILE, 'VALID'), (rejected_items, REJECTED_FILE, 'REJECTED')]:
-            if not items:
-                continue
-
-            history = []
-            if target_file.exists():
-                try:
-                    with open(target_file, 'r') as f:
-                        history = json.load(f)
-                except Exception as e:
-                    print(f"[WARNING] Could not read {target_file.name}: {e}")
-                    history = []
-            
-            history.extend(items)
-            # Keep only last 1000 records
-            history = history[-1000:]
-            
-            with open(target_file, 'w') as f:
-                json.dump(history, f, indent=2)
-                
-            print(f"[LOG] Stored {len(items)} {label} predictions to {target_file.name}")
+        db.save_predictions(data_list)
+        print(f"[LOG] Stored {len(data_list)} predictions to database")
             
     except Exception as e:
         print(f"[ERROR] Failed to store predictions: {e}")
@@ -429,88 +398,59 @@ async def qa_check(file: UploadFile = File(...)):
                 pass
 
 # ----- Data -----
-@app.get("/data/history", tags=["Data"])
-def get_prediction_history(limit: int = 50):
-    """Retrieve combined prediction history (Valid + Rejected)."""
+@app.get("/data/history")
+async def get_prediction_history(limit: int = 100):
+    """Get the merged history of all predictions from the database."""
     try:
-        # Load valid history
-        valid_history = []
-        if HISTORY_FILE.exists():
-            with open(HISTORY_FILE, 'r') as f:
-                valid_history = json.load(f)
-        
-        # Load rejected history
-        rejected_history = []
-        if REJECTED_FILE.exists():
-            with open(REJECTED_FILE, 'r') as f:
-                rejected_history = json.load(f)
-        
-        # Merge and sort by timestamp
-        all_history = valid_history + rejected_history
-        all_history.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
-        
-        return {
-            "history": all_history[:limit],
-            "total": len(all_history)
-        }
+        history = db.get_history(limit=limit)
+        total = db.get_total_count()
+        return {"history": history, "total": total}
     except Exception as e:
-        print(f"[ERROR] Failed to read history: {e}")
+        print(f"[ERROR] Failed to fetch history: {e}")
         return {"history": [], "total": 0}
 
 # ----- Export -----
-@app.get("/data/export/csv", tags=["Data"])
-def export_history_csv():
-    """Export prediction history to CSV."""
+@app.get("/data/export/csv")
+async def export_history_csv():
+    """Export the combined history to a CSV file."""
     try:
-        # Load valid history
-        valid_history = []
-        if HISTORY_FILE.exists():
-            with open(HISTORY_FILE, 'r') as f:
-                valid_history = json.load(f)
+        # Query all records from the database
+        history = db.get_history(limit=5000)
         
-        # Load rejected history
-        rejected_history = []
-        if REJECTED_FILE.exists():
-            with open(REJECTED_FILE, 'r') as f:
-                rejected_history = json.load(f)
+        if not history:
+            return JSONResponse(status_code=404, content={"message": "No data to export"})
+            
+        # Convert to pandas DataFrame for easy CSV generation
+        df = pd.DataFrame(history)
         
-        # Merge all records
-        all_records = valid_history + rejected_history
+        # Define core columns we want in the export
+        core_cols = [
+            'timestamp', 'filename', 'mode', 'final_label', 'final_confidence', 
+            'fruit_count', 'unripe_count', 'ripe_count', 'overripe_count', 
+            'unripe_ratio', 'ripe_ratio', 'overripe_ratio', 'message'
+        ]
         
-        if not all_records:
-            return StreamingResponse(
-                io.StringIO("timestamp,mode,final_label,confidence,fruits_detected\n"),
-                media_type="text/csv",
-                headers={"Content-Disposition": "attachment; filename=coffee_predictions.csv"}
-            )
-
-        df = pd.DataFrame(all_records)
+        # Filter for existing columns only
+        export_cols = [c for c in core_cols if c in df.columns]
+        df_export = df[export_cols]
         
-        # Sort by timestamp (descending)
-        if 'timestamp' in df.columns:
-            df = df.sort_values(by='timestamp', ascending=False)
+        # Stream the CSV
+        output = io.StringIO()
+        df_export.to_csv(output, index=False)
         
-        # Define core columns and ensure they exist
-        cols = ['timestamp', 'mode', 'final_label', 'confidence', 'fruits_detected']
-        for col in cols:
-            if col not in df.columns:
-                df[col] = "N/A"
-        
-        # Select columns in preferred order
-        df = df[cols]
-        
-        stream = io.StringIO()
-        df.to_csv(stream, index=False)
+        headers = {
+            'Content-Disposition': 'attachment; filename="coffee_predictions.csv"',
+            'Content-Type': 'text/csv'
+        }
         
         return StreamingResponse(
-            io.StringIO(stream.getvalue()),
-            media_type="text/csv",
-            headers={"Content-Disposition": "attachment; filename=coffee_predictions.csv"}
+            iter([output.getvalue()]),
+            headers=headers
         )
     except Exception as e:
-        print(f"[ERROR] Export failed: {e}")
+        print(f"[ERROR] CSV export failed: {e}")
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail="Export failed")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ----- Prediction: YOLO Only -----
 @app.post("/predict/yolo", tags=["Prediction"])
@@ -609,7 +549,7 @@ async def predict_yolo(file: UploadFile = File(...)):
         store_prediction({
             "mode": "YOLO",
             "final_label": result['final_label'],
-            "confidence": result['final_confidence'],
+            "final_confidence": result['final_confidence'],
             "distribution": result['distribution'],
             "fruits_detected": result['fruits_detected']
         })
@@ -728,7 +668,7 @@ async def predict_effnet(file: UploadFile = File(...)):
         store_prediction({
             "mode": "EfficientNet",
             "final_label": result['final_label'],
-            "confidence": result['final_confidence'],
+            "final_confidence": result['final_confidence'],
             "distribution": result['distribution'],
             "fruits_detected": result['fruits_detected']
         })
@@ -810,7 +750,7 @@ async def predict_hybrid(file: UploadFile = File(...)):
             store_prediction({
                 "mode": "Hybrid",
                 "final_label": "REJECTED",
-                "confidence": 0.0,
+                "final_confidence": 0.0,
                 "distribution": {"Unripe": 0, "Ripe": 0, "Overripe": 0},
                 "fruits_detected": 0,
                 "qa_pass": False,
@@ -859,7 +799,7 @@ async def predict_hybrid(file: UploadFile = File(...)):
         store_prediction({
             "mode": "Hybrid",
             "final_label": result['final_label'],
-            "confidence": result['final_confidence'],
+            "final_confidence": result['final_confidence'],
             "distribution": result['distribution'],
             "fruits_detected": result['fruits_detected']
         })
@@ -936,7 +876,7 @@ async def predict_batch(files: list[UploadFile] = File(...)):
                 to_store.append({
                     "mode": "Hybrid",
                     "final_label": "REJECTED",
-                    "confidence": 0.0,
+                    "final_confidence": 0.0,
                     "distribution": {"Unripe": 0, "Ripe": 0, "Overripe": 0},
                     "fruits_detected": 0,
                     "qa_pass": False,
@@ -958,7 +898,7 @@ async def predict_batch(files: list[UploadFile] = File(...)):
             to_store.append({
                 "mode": "Hybrid",
                 "final_label": res['final_label'],
-                "confidence": res['final_confidence'],
+                "final_confidence": res['final_confidence'],
                 "distribution": res['distribution'],
                 "fruits_detected": res['fruits_detected']
             })

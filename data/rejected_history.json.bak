@@ -516,5 +516,47 @@
     "qa_pass": false,
     "qa_reason": "insufficient_fruits",
     "timestamp": "2026-03-06T12:50:27.271946"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T15:04:14.632107"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "area_too_large",
+    "timestamp": "2026-03-06T15:04:14.632107"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "REJECTED",
+    "confidence": 0.0,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 0,
+    "qa_pass": false,
+    "qa_reason": "insufficient_fruits",
+    "timestamp": "2026-03-06T15:04:14.632107"
   }
 ]

@@ -1916,5 +1916,101 @@
     },
     "fruits_detected": 7,
     "timestamp": "2026-03-06T12:37:44.823924"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-06T14:50:24.974176"
+  },
+  {
+    "mode": "YOLO",
+    "final_label": "Ripe",
+    "confidence": 0.7755,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-06T14:57:04.397193"
+  },
+  {
+    "mode": "EfficientNet",
+    "final_label": "Ripe",
+    "confidence": 0.9869,
+    "distribution": {
+      "Unripe": 0.007104561198502779,
+      "Ripe": 0.9868966937065125,
+      "Overripe": 0.00599866034463048
+    },
+    "fruits_detected": 1,
+    "timestamp": "2026-03-06T14:57:19.027323"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-06T14:57:37.225987"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Overripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 0,
+      "Overripe": 7
+    },
+    "fruits_detected": 7,
+    "timestamp": "2026-03-06T15:04:14.632107"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 28,
+      "Ripe": 65,
+      "Overripe": 10
+    },
+    "fruits_detected": 103,
+    "timestamp": "2026-03-06T15:04:14.632107"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Ripe",
+    "confidence": 0.7778,
+    "distribution": {
+      "Unripe": 0,
+      "Ripe": 31,
+      "Overripe": 13
+    },
+    "fruits_detected": 44,
+    "timestamp": "2026-03-06T15:04:14.632107"
+  },
+  {
+    "mode": "Hybrid",
+    "final_label": "Unripe",
+    "confidence": 0.99,
+    "distribution": {
+      "Unripe": 36,
+      "Ripe": 0,
+      "Overripe": 0
+    },
+    "fruits_detected": 36,
+    "timestamp": "2026-03-06T15:04:14.632107"
   }
 ]
