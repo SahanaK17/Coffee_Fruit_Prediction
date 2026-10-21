@@ -9,7 +9,7 @@ __pycache__/
 venv/
 .env/
 .venv/
-
+.env
 # Model files
 *.pt
 *.pth

@@ -1,0 +1,15 @@
+{
+  "site_package_search_strategy": "pep561",
+  "search_path": [
+    "C:\\Python314\\Lib\\site-packages",
+    "."
+  ],
+  "source_directories": ["."],
+  "python_version": "3.14",
+  "strict": false,
+  "exclude": [
+    ".*/__pycache__/.*",
+    ".*/node_modules/.*",
+    ".*/\\.git/.*"
+  ]
+}

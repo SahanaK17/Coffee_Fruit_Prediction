@@ -1,0 +1,54 @@
+# Environments
+.env
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest
+.pytest_cache/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+data/
+models/
+uploads/
+temp/
+*.log
+
+# Node (just in case)
+node_modules/
+package-lock.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+secrets.json
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+secrets.json

@@ -14,3 +14,7 @@ pyyaml
 pandas
 tqdm
 fpdf2
+xgboost
+python-dotenv
+joblib
+requests

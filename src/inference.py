@@ -9,10 +9,18 @@ import os
 import traceback
 from typing import Dict, List, Tuple, Optional
 
+# Import the new soil fusion model and soil service
+try:
+    from .soil_fusion_model import SoilFusionModel
+    from .soil_service import get_soil_features_for_prediction
+except ImportError:
+    pass
+
 class HybridModel:
-    def __init__(self, yolo_path: str, effnet_path: str, num_classes: int = 3):
+    def __init__(self, yolo_path: str, effnet_path: str, soil_fusion_path: str = None, num_classes: int = 3):
         """
         Initialize the hybrid model with both YOLO and EfficientNet.
+        Optionally load the SoilFusionModel if path is provided.
         """
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.classes = ['Unripe', 'Ripe', 'Overripe']
@@ -57,6 +65,19 @@ class HybridModel:
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
+        
+        # Load Soil Fusion Model if path provided
+        self.soil_fusion = None
+        if soil_fusion_path and os.path.exists(soil_fusion_path):
+            try:
+                print(f"[INFO] Loading Soil Fusion Model from {soil_fusion_path}")
+                self.soil_fusion = SoilFusionModel(num_classes=num_classes)
+                self.soil_fusion.load_state_dict(torch.load(soil_fusion_path, map_location=self.device))
+                self.soil_fusion = self.soil_fusion.to(self.device)
+                self.soil_fusion.eval()
+                print("[SUCCESS] Soil Fusion Model loaded")
+            except Exception as e:
+                print(f"[WARNING] Failed to load Soil Fusion Model: {e}")
         
         print("[INFO] Models loaded successfully")
 
@@ -430,6 +451,117 @@ class HybridModel:
             'eff_confidence': round(effnet_conf, 4),
             'yolo_label': yolo_label,
             'eff_label': effnet_label
+        }
+
+    def predict_hybrid_with_soil(self, image_path: str, lat: float, lon: float) -> Dict:
+        """Mode D: Hybrid prediction incorporating SoilGrids features."""
+        # 1. Base YOLO check exactly like hybrid
+        results = self.yolo(image_path, verbose=False)[0]
+        boxes = results.boxes.xyxy.cpu().numpy()
+        scores = results.boxes.conf.cpu().numpy()
+        classes = results.boxes.cls.cpu().numpy() if hasattr(results.boxes, 'cls') else None
+        
+        predictions = []
+        class_counts = {'Unripe': 0, 'Ripe': 0, 'Overripe': 0}
+        class_raw_confs = {'Unripe': [], 'Ripe': [], 'Overripe': []}
+        
+        for i, box in enumerate(boxes):
+            x1, y1, x2, y2 = map(int, box)
+            conf = float(scores[i])
+            cls_idx = int(classes[i]) if classes is not None else 1
+            cls_name = self.classes[cls_idx] if cls_idx < len(self.classes) else 'Ripe'
+            
+            predictions.append({
+                'box': [x1, y1, x2, y2],
+                'class': cls_name,
+                'confidence': conf
+            })
+            class_counts[cls_name] += 1
+            class_raw_confs[cls_name].append(conf)
+            
+        if predictions:
+            yolo_label = max(class_counts, key=class_counts.get)
+            yolo_conf = float(np.mean(class_raw_confs[yolo_label]))
+        else:
+            yolo_label = 'None'
+            yolo_conf = 0.0
+
+        # 2. Extract and Preprocess Soil Data
+        soil_features, raw_soil_data = get_soil_features_for_prediction(lat, lon)
+        soil_tensor = torch.tensor(soil_features, dtype=torch.float32).unsqueeze(0).to(self.device)
+
+        # 3. Model Prediction using Soil Fusion Model
+        img_pil = Image.open(image_path).convert('RGB')
+        img_tensor = self.transform(img_pil).unsqueeze(0).to(self.device)
+        
+        try:
+            if self.soil_fusion is not None:
+                with torch.no_grad():
+                    output = self.soil_fusion(img_tensor, soil_tensor)
+                    probs = torch.softmax(output, dim=1)[0]
+                    fusion_raw, cls_idx = torch.max(probs, 0)
+                fusion_label = self.classes[cls_idx.item()]
+                fusion_conf = float(fusion_raw.item())
+            else:
+                raise ValueError("Soil Fusion Model not initialized or loaded.")
+        except Exception as e:
+            print(f"[WARNING] Soil prediction failed, falling back to base EffNet: {e}")
+            with torch.no_grad():
+                output = self.effnet(img_tensor)
+                probs = torch.softmax(output, dim=1)[0]
+                fusion_raw, cls_idx = torch.max(probs, 0)
+            fusion_label = self.classes[cls_idx.item()]
+            fusion_conf = float(fusion_raw.item())
+
+        # 4. Fusion Logic (Semantic Agreement just like standard hybrid but using Soil Fusion Model)
+        agreement = (yolo_label == fusion_label) and (yolo_label != 'None')
+        
+        cy = yolo_conf
+        ce = fusion_conf
+        boost_thresh = 0.65
+        
+        if agreement:
+            if cy >= boost_thresh and ce >= boost_thresh:
+                base = max(cy, ce)
+                hybrid_conf = min(base + 0.05, 0.99)
+                status_msg = "Agreement (Boosted with Soil)"
+            else:
+                hybrid_conf = (cy + ce) / 2.0
+                status_msg = "Agreement (Weak with Soil)"
+            final_label = yolo_label
+        else:
+            if cy > ce:
+                final_label = yolo_label
+                hybrid_conf = cy * 0.85 
+                status_msg = "Disagreement (YOLO Favored over Soil Fusion)"
+            else:
+                final_label = fusion_label
+                hybrid_conf = ce * 0.85
+                status_msg = "Disagreement (Soil Fusion Favored over YOLO)"
+
+        hybrid_conf = float(min(max(hybrid_conf, 0.0), 1.0))
+
+        print(f"\n[HYBRID FUSION WITH SOIL]")
+        print(f"  YOLO: {yolo_label} ({yolo_conf:.4f})")
+        print(f"  Soil Fusion: {fusion_label} ({fusion_conf:.4f})")
+        print(f"  Agreement: {agreement}")
+        print(f"  Hybrid: {hybrid_conf:.4f}")
+        print(f"  Status: {status_msg}")
+
+        return {
+            'mode': 'Hybrid+Soil',
+            'predictions': predictions,
+            'final_label': final_label,
+            'final_confidence': round(hybrid_conf, 4),
+            'distribution': class_counts,
+            'fruits_detected': len(predictions),
+            'agreement': agreement,
+            'status_msg': status_msg,
+            'yolo_confidence': round(yolo_conf, 4),
+            'fusion_confidence': round(fusion_conf, 4),
+            'yolo_label': yolo_label,
+            'fusion_label': fusion_label,
+            'soil_data': raw_soil_data
         }
 
     def draw_annotations(self, image_path: str, predictions: List[Dict]) -> np.ndarray:

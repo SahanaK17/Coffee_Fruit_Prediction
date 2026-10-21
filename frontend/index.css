@@ -483,7 +483,7 @@ body {
     box-shadow: inset 0 0 24px rgba(198, 124, 78, 0.04);
 }
 
-#fileElem, #batchFileElem {
+#fileElem, #batchFileElem, #yieldFileElem {
     display: none;
 }
 
@@ -518,7 +518,7 @@ body {
     color: var(--text-muted);
 }
 
-#preview-container {
+#preview-container, #yield-preview-container {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: #000;
@@ -526,7 +526,7 @@ body {
     overflow: hidden;
 }
 
-#preview-img {
+#preview-img, #yield-preview-img {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -991,3 +991,482 @@ body {
     color: #e3b341;
     text-shadow: 0 0 12px rgba(227, 179, 65, 0.4);
 }
+
+/* ==================== PREDICT TABS ==================== */
+.predict-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: fit-content;
+}
+
+.predict-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font);
+    letter-spacing: 0.2px;
+}
+
+.predict-tab:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.predict-tab.active {
+    background: rgba(198, 124, 78, 0.12);
+    color: var(--primary-light);
+    border-color: rgba(198, 124, 78, 0.3);
+    box-shadow: 0 0 16px rgba(198, 124, 78, 0.1);
+}
+
+.tab-icon {
+    font-size: 16px;
+}
+
+/* Tab Content Sections */
+.predict-tab-content {
+    display: none;
+    animation: fadeInUp 0.35s ease;
+}
+
+.predict-tab-content.active {
+    display: block;
+}
+
+/* ==================== YIELD DASHBOARD REDESIGN ==================== */
+.yield-dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 24px;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.glass-card {
+    background: rgba(22, 27, 34, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-card:hover {
+    background: rgba(22, 27, 34, 0.5);
+    border-color: rgba(198, 124, 78, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Visualization Panel */
+.viz-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.viz-panel-header h3 {
+    margin-bottom: 0 !important;
+}
+
+.viz-image-wrapper {
+    width: 100%;
+    min-height: 280px;
+    max-height: 400px;
+    background: #010409;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.viz-image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.viz-overlay-badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(13, 17, 23, 0.85);
+    color: var(--primary-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(198, 124, 78, 0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    z-index: 5;
+}
+
+/* Yield Summary Card */
+.yield-summary-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle at top right, rgba(198, 124, 78, 0.1), transparent), 
+                rgba(22, 27, 34, 0.4);
+}
+
+.yield-main-value-group {
+    margin: 20px 0;
+}
+
+.yield-main-value {
+    font-size: 54px;
+    font-weight: 800;
+    color: var(--primary-light);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(198, 124, 78, 0.4);
+}
+
+.yield-unit {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-left: 6px;
+}
+
+.yield-arch-badge {
+    margin-top: 12px;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Confidence Indicator */
+.confidence-section {
+    width: 100%;
+    max-width: 280px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.conf-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.conf-value {
+    font-weight: 700;
+    color: var(--success);
+}
+
+.conf-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.conf-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--success));
+    width: 0%;
+    transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 10px rgba(63, 185, 80, 0.3);
+}
+
+/* Feature Grid */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.feature-mini-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 18px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+}
+
+.feature-mini-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.feature-mini-card label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.feature-mini-card .val {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+/* Chart Container */
+.chart-container-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-wrapper {
+    flex: 1;
+    min-height: 240px;
+    position: relative;
+    margin-top: 10px;
+}
+
+/* Animations */
+.animated-item {
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* ==================== PROFIT STATUS BADGES ==================== */
+.profit-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.profit-profit {
+    background: rgba(63, 185, 80, 0.15);
+    color: var(--success);
+    border: 1.5px solid rgba(63, 185, 80, 0.4);
+    box-shadow: 0 0 20px rgba(63, 185, 80, 0.15);
+}
+
+.profit-loss {
+    background: rgba(248, 81, 73, 0.15);
+    color: var(--error);
+    border: 1.5px solid rgba(248, 81, 73, 0.4);
+    box-shadow: 0 0 20px rgba(248, 81, 73, 0.15);
+}
+
+.profit-breakeven {
+    background: rgba(210, 153, 34, 0.15);
+    color: var(--warning);
+    border: 1.5px solid rgba(210, 153, 34, 0.4);
+    box-shadow: 0 0 20px rgba(210, 153, 34, 0.15);
+}
+
+.profit-icon {
+    font-size: 16px;
+}
+
+.profit-label {
+    font-weight: 800;
+}
+
+/* ==================== EXPLAINABILITY CARDS ==================== */
+.explainability-card {
+    min-height: 180px;
+}
+
+.reasons-list,
+.suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.reason-item,
+.suggestion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.reason-item {
+    background: rgba(248, 81, 73, 0.06);
+    border-color: rgba(248, 81, 73, 0.15);
+    color: var(--text-primary);
+}
+
+.reason-item:hover {
+    background: rgba(248, 81, 73, 0.1);
+    border-color: rgba(248, 81, 73, 0.3);
+    transform: translateX(4px);
+}
+
+.suggestion-item {
+    background: rgba(63, 185, 80, 0.06);
+    border-color: rgba(63, 185, 80, 0.15);
+    color: var(--text-primary);
+}
+
+.suggestion-item:hover {
+    background: rgba(63, 185, 80, 0.1);
+    border-color: rgba(63, 185, 80, 0.3);
+    transform: translateX(4px);
+}
+
+.reason-icon,
+.suggestion-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.reason-text {
+    color: #f0a8a4;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.suggestion-text {
+    color: #8fd9a0;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* ==================== FORM INPUTS ==================== */
+.form-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font);
+    transition: var(--transition);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(198, 124, 78, 0.2);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ==================== SELECT DROPDOWN ==================== */
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    cursor: pointer;
+}
+
+.form-select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+.form-select:hover {
+    border-color: var(--border-hover);
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* ==================== SOIL SCORE CARD ==================== */
+.soil-score-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.soil-score-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ff5252, #ffab40, #8bc34a);
+    opacity: 0.8;
+}
+
+.soil-score-card:hover {
+    border-color: rgba(139, 195, 74, 0.5) !important;
+    box-shadow: 0 0 20px rgba(139, 195, 74, 0.1);
+}
+
+/* ==================== SOIL INPUT SECTION ==================== */
+.soil-input-section {
+    transition: var(--transition);
+}
+
+.soil-input-section:hover {
+    border-color: rgba(139, 195, 74, 0.3) !important;
+}
